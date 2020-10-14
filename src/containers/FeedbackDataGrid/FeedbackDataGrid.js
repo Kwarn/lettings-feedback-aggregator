@@ -1,22 +1,40 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import { DataGrid } from '@material-ui/data-grid'
 import classes from './FeedbackDataGrid.module.css'
 
 const FeedbackDataGrid = ({ feedbackData }) => {
-  function populateDataGrid() {
+  const [rows, setRows] = useState([])
+  useEffect(() => {
+    const rows = []
     for (let fb in feedbackData) {
       rows.push({
         id: fb,
         col1: feedbackData[fb].viewingDate,
-        col2: feedbackData[fb].location,
+        col2: locations[feedbackData[fb].location],
         col3: feedbackData[fb].flatNumber,
         col4: feedbackData[fb].applicantName,
-        col5: feedbackData[fb].reason,
+        col5: reasons[feedbackData[fb].reason],
         col6: feedbackData[fb].notes,
       })
     }
+    setRows(rows)
+  }, [feedbackData])
+  
+  const locations = {
+    poplar: 'Poplar',
+    canningTown: 'Canning Town',
+    epsom: 'Epsom',
+    lewisham: 'Lewisham',
+    walthamstow: 'Walthamstow',
+    hayes: 'Hayes',
+    stepneyGreen: 'Stepney Green',
   }
-  const rows = []
+  const reasons = {
+    cost: 'Cost',
+    commute: 'Commute Distance',
+    travelLinks: 'Travel Links',
+  }
+
   const columns = [
     { field: 'id', hide: true },
     { field: 'col1', headerName: 'Viewing Date', width: 150 },
@@ -27,17 +45,10 @@ const FeedbackDataGrid = ({ feedbackData }) => {
     { field: 'col6', headerName: 'Notes', width: 150 },
   ]
 
-  if (feedbackData) populateDataGrid()
-
   return (
-    // <div className={classes.Wrapper}>
-      <div style={{ height: 600, width: '100%' }}>
-        <DataGrid
-          rows={rows}
-          columns={columns}
-        />
-      </div>
-    // </div>
+    <div style={{ height: 600, width: '100%' }}>
+      <DataGrid rows={rows} columns={columns} />
+    </div>
   )
 }
 

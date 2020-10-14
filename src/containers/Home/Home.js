@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import Form from '../Form/Form'
+import axios from '../../shared/axios-feedback'
+import Button from '@material-ui/core/Button'
 import { getFeedbackData, getTallies } from '../../shared/getData'
 import FeedbackDataGrid from '../FeedbackDataGrid/FeedbackDataGrid'
 import Charts from '../Charts/Charts'
@@ -14,19 +16,50 @@ const Home = () => {
     setShouldFeedbackUpdate(!shouldFeedbackUpdate)
   }
 
+  const defaultTallies = {
+    location: {
+      lewisham: 0,
+      poplar: 0,
+      canningTown: 0,
+      epsom: 0,
+      walthamstow: 0,
+      hayes: 0,
+      stepneyGreen: 0,
+    },
+    reason: {
+      cost: 0,
+      travelLinks: 0,
+      commute: 0,
+    },
+  }
+
+  function resetTallyDatabase() {
+    axios.put('/tallies.json', defaultTallies)
+  }
+
   useEffect(() => {
     getFeedbackData()
       .then(data => setFeedbackData(data))
       .catch(err => console.log(err))
-    getTallies()
-      .then(data => setTallies(data))
-      .catch(err => console.log(err))
+    if (!tallies) {
+      getTallies()
+        .then(data => setTallies(data))
+        .catch(err => console.log(err))
+    }
   }, [shouldFeedbackUpdate])
 
   return (
     <div>
+      <Button onClick={resetTallyDatabase}>Test</Button>
       <div className={classes.SectionWrapper}>
-        <Form toggleShouldUpdateCallback={toggleShouldFeedbackUpdate} />
+        {tallies ? (
+          <Form
+            tallies={tallies}
+            toggleShouldUpdateCallback={toggleShouldFeedbackUpdate}
+          />
+        ) : (
+          <div>Loading..</div>
+        )}
       </div>
       <div className={classes.SectionWrapper}>
         {feedbackData ? (
@@ -40,11 +73,8 @@ const Home = () => {
         )}
       </div>
       <div className={classes.SectionWrapper}>
-        {tallies ? (
-          <Charts tallies={tallies} />
-        ) : (
-          <h2>Loading Data..</h2>
-        )}
+        {tallies ? <Charts tallies={tallies} /> : <h2>Loading Charts</h2> }
+        
       </div>
     </div>
   )

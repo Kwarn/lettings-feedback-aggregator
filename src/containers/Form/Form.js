@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import axios from '../../shared/axios-feedback'
 import { makeStyles } from '@material-ui/core/styles'
 import Button from '@material-ui/core/Button'
@@ -9,6 +9,24 @@ import Select from '@material-ui/core/Select'
 import MenuItem from '@material-ui/core/MenuItem'
 import TextField from '@material-ui/core/TextField'
 import classes from './Form.module.css'
+import { updateObject } from '../../shared/Utility'
+
+const defaultTallies = {
+  location: {
+    lewisham: 0,
+    poplar: 0,
+    canningTown: 0,
+    epsom: 0,
+    walthamstow: 0,
+    hayes: 0,
+    stepneyGreen: 0,
+  },
+  reason: {
+    cost: 0,
+    travelLinks: 0,
+    commute: 0,
+  },
+}
 
 const useStyles = makeStyles(theme => ({
   formControl: {
@@ -25,7 +43,17 @@ const useStyles = makeStyles(theme => ({
   },
 }))
 
-const Form = ({ toggleShouldUpdateCallback }) => {
+const locations = [
+  { poplar: 'Poplar' },
+  { canningTown: 'Canning Town' },
+  { epsom: 'Epsom' },
+  { lewisham: 'Lewisham' },
+  { walthamstow: 'Walthamstow' },
+  { hayes: 'Hayes' },
+  { stepneyGreen: 'Stepney Green' },
+]
+
+const Form = ({ tallies, toggleShouldUpdateCallback }) => {
   const styles = useStyles()
   const [error, setError] = useState('')
   const [formInputs, setFormInputs] = useState({
@@ -37,21 +65,10 @@ const Form = ({ toggleShouldUpdateCallback }) => {
     notes: '',
   })
 
-  const locations = [
-    { poplar: 'Poplar' },
-    { canningTown: 'Canning Town' },
-    { epsom: 'Epsom' },
-    { lewisham: 'Lewisham' },
-    { walthamstow: 'Walthamstow' },
-    { hayes: 'Hayes' },
-    { stepneyGreen: 'Stepney Green' },
-  ]
-
   const locationMenuItems = locations.map(l => {
     const key = Object.keys(l)[0]
-    return <MenuItem key={key} value={l[key]}>{`${l[key]}`}</MenuItem>
+    return <MenuItem key={key} value={key}>{`${l[key]}`}</MenuItem>
   })
-
 
   function clearFields() {
     setFormInputs({
@@ -64,8 +81,22 @@ const Form = ({ toggleShouldUpdateCallback }) => {
     })
   }
 
-  function createTally() {
+  function updateTallies() {
+    const tempLocationTally = {
+      [formInputs.location]: (tallies.location[formInputs.location] += 1),
+    }
+    const tempReasonTally = {
+      [formInputs.reason]: (tallies.reason[formInputs.reason] += 1),
+    }
 
+    const updatedLocation = updateObject(tallies.location, tempLocationTally)
+    const updatedReason = updateObject(tallies.reason, tempReasonTally)
+
+    return {
+      ...tallies,
+      location: { ...updatedLocation },
+      reason: { ...updatedReason },
+    }
   }
 
   function submitForm() {
@@ -77,13 +108,13 @@ const Form = ({ toggleShouldUpdateCallback }) => {
     if (!isFormValid) {
       setError(<h1>Please fill out form</h1>)
     } else {
-      const tallies = createTally()
+      const tallies = updateTallies()
       axios
         .post('/feedback.json', formInputs)
         .then(res => clearFields())
         .then(res => toggleShouldUpdateCallback())
         .catch(err => setError(err.message))
-      axios.post('/tallies.json', tallies)
+      axios.put('/tallies.json', tallies).catch(err => console.log(err))
     }
   }
 
@@ -141,9 +172,9 @@ const Form = ({ toggleShouldUpdateCallback }) => {
             setFormInputs({ ...formInputs, reason: event.target.value })
           }
         >
-          <MenuItem value="Cost">Cost</MenuItem>
-          <MenuItem value="Commute">Commute Distance</MenuItem>
-          <MenuItem value="Travel Links">Travel Links</MenuItem>
+          <MenuItem value="cost">Cost</MenuItem>
+          <MenuItem value="commute">Commute Distance</MenuItem>
+          <MenuItem value="travelLinks">Travel Links</MenuItem>
         </Select>
       </FormControl>
 

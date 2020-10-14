@@ -1,11 +1,12 @@
 import React, { useState } from 'react'
 import Pie from './Pie/Pie'
+import classes from './Charts.module.css'
 
-const Charts = ({ feedbackData }) => {
+const Charts = ({ tallies }) => {
 
   return (
-    <div>
-      <Pie data={feedbackData} />
+    <div className={classes.Wrapper}>
+      <Pie tallies={tallies} />
     </div>
   )
 }
