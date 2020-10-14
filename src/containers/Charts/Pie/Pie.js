@@ -1,7 +1,20 @@
 import React from 'react'
 import Chart from 'react-google-charts'
+import { makeStyles } from '@material-ui/core/styles'
+
+const useStyles = makeStyles({
+  wrapper: {
+    display: 'flex',
+    justifyContent: 'center'
+  },
+  pieChart: {
+    margin: "auto"
+  },
+})
 
 const Pie = ({ tallies }) => {
+  const styles = useStyles()
+
   const locations = {
     poplar: 'Poplar',
     canningTown: 'Canning Town',
@@ -17,27 +30,26 @@ const Pie = ({ tallies }) => {
     travelLinks: 'Travel Links',
   }
 
-  const locationPieData = [["Location", "Number of Entries"]]
+  const locationPieData = [['Location', 'Number of Entries']]
   for (let key in tallies.location) {
     console.log(key)
     locationPieData.push([`${locations[key]}`, tallies.location[key]])
   }
 
-  const reasonPieData = [["Reason", "Number of Entries"]]
+  const reasonPieData = [['Reason', 'Number of Entries']]
   for (let key in tallies.reason) {
     console.log(key)
     reasonPieData.push([`${reason[key]}`, tallies.reason[key]])
   }
 
-
-
   console.log(locationPieData)
 
   return (
-    <div>
+    <div className={styles.wrapper}>
       <Chart
-        width={'30vw'}
-        height={'30vh'}
+        className={styles.pieChart}
+        width={'50vw'}
+        height={'50vh'}
         chartType="PieChart"
         loader={<div>Loading Chart</div>}
         data={locationPieData}
@@ -47,8 +59,8 @@ const Pie = ({ tallies }) => {
         rootProps={{ 'data-testid': '1' }}
       />
       <Chart
-        width={'30vw'}
-        height={'30vh'}
+        width={'50vw'}
+        height={'50vh'}
         chartType="PieChart"
         loader={<div>Loading Chart</div>}
         data={reasonPieData}

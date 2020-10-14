@@ -5,7 +5,6 @@ import Button from '@material-ui/core/Button'
 import { getFeedbackData, getTallies } from '../../shared/getData'
 import FeedbackDataGrid from '../FeedbackDataGrid/FeedbackDataGrid'
 import Charts from '../Charts/Charts'
-import classes from './Home.module.css'
 
 const Home = () => {
   const [shouldFeedbackUpdate, setShouldFeedbackUpdate] = useState(false)
@@ -51,7 +50,7 @@ const Home = () => {
   return (
     <div>
       <Button onClick={resetTallyDatabase}>Test</Button>
-      <div className={classes.SectionWrapper}>
+      <div className={null}>
         {tallies ? (
           <Form
             tallies={tallies}
@@ -61,7 +60,7 @@ const Home = () => {
           <div>Loading..</div>
         )}
       </div>
-      <div className={classes.SectionWrapper}>
+      <div className={null}>
         {feedbackData ? (
           <FeedbackDataGrid
             feedbackData={feedbackData}
@@ -72,7 +71,7 @@ const Home = () => {
           <h2>Loading Data..</h2>
         )}
       </div>
-      <div className={classes.SectionWrapper}>
+      <div className={null}>
         {tallies ? <Charts tallies={tallies} /> : <h2>Loading Charts</h2> }
         
       </div>

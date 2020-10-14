@@ -1,11 +1,9 @@
 import React, { useState } from 'react'
 import Pie from './Pie/Pie'
-import classes from './Charts.module.css'
 
 const Charts = ({ tallies }) => {
-
   return (
-    <div className={classes.Wrapper}>
+    <div className={null}>
       <Pie tallies={tallies} />
     </div>
   )

@@ -1,8 +1,28 @@
 import React, { useState, useEffect } from 'react'
 import { DataGrid } from '@material-ui/data-grid'
-import classes from './FeedbackDataGrid.module.css'
+import { makeStyles } from '@material-ui/core/styles'
+
+const useStyles = makeStyles(theme => ({
+  wrapper: {
+    display: 'flex',
+    justifyContent: 'center',
+  },
+  formControl: {
+    margin: theme.spacing(1),
+    minWidth: 120,
+  },
+  selectEmpty: {
+    marginTop: theme.spacing(2),
+  },
+  button: {
+    margin: theme.spacing(1),
+    minWidth: 120,
+    maxHeight: 50,
+  },
+}))
 
 const FeedbackDataGrid = ({ feedbackData }) => {
+  const styles = useStyles()
   const [rows, setRows] = useState([])
   useEffect(() => {
     const rows = []
@@ -19,7 +39,7 @@ const FeedbackDataGrid = ({ feedbackData }) => {
     }
     setRows(rows)
   }, [feedbackData])
-  
+
   const locations = {
     poplar: 'Poplar',
     canningTown: 'Canning Town',
@@ -46,8 +66,10 @@ const FeedbackDataGrid = ({ feedbackData }) => {
   ]
 
   return (
-    <div style={{ height: 600, width: '100%' }}>
-      <DataGrid rows={rows} columns={columns} />
+    <div className={styles.wrapper}>
+      <div style={{ height: 600, width: '100%', margin: "100px" }}>
+        <DataGrid rows={rows} columns={columns} />
+      </div>
     </div>
   )
 }

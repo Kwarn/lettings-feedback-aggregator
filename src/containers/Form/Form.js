@@ -8,7 +8,6 @@ import Input from '@material-ui/core/Input'
 import Select from '@material-ui/core/Select'
 import MenuItem from '@material-ui/core/MenuItem'
 import TextField from '@material-ui/core/TextField'
-import classes from './Form.module.css'
 import { updateObject } from '../../shared/Utility'
 
 const defaultTallies = {
@@ -29,6 +28,10 @@ const defaultTallies = {
 }
 
 const useStyles = makeStyles(theme => ({
+  wrapper: {
+    display: 'flex',
+    justifyContent: 'center',
+  },
   formControl: {
     margin: theme.spacing(1),
     minWidth: 120,
@@ -119,7 +122,7 @@ const Form = ({ tallies, toggleShouldUpdateCallback }) => {
   }
 
   return (
-    <form className={classes.Form}>
+    <form className={styles.wrapper}>
       <TextField
         className={styles.formControl}
         label="Viewing Date"
