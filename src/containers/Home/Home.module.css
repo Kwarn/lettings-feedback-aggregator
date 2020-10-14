@@ -1,0 +1,9 @@
+.Home {
+  min-height: 100vh;
+}
+
+.SectionWrapper {
+  /* min-height: 20vh; */
+  display: flex;
+  /* justify-content: center; */
+}

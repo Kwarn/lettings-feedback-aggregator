@@ -1,0 +1,23 @@
+.Toolbar {
+  height: 56px;
+  width: 100%;
+  position: fixed;
+  top: 0;
+  left: 0;
+  background-color:rgba(71, 71, 71, 0.6);
+  z-index: 100;
+  transition: top 0.6s;
+}
+
+.Toolbar nav {
+  height: 100%;
+}
+
+.ToolbarHidden {
+  top: -56px;
+  opacity: 0.8;
+}
+
+.ToolbarShown {
+  top: 0;
+}

@@ -1,0 +1,24 @@
+.NavigationItem {
+  margin: auto;
+  display: flex;
+  height: 100%;
+}
+
+.NavigationItem a {
+  color: #fbf3ee;
+  text-decoration: none;
+  height: 100%;
+  padding: 16px 10px 16px 10px;
+  border-bottom: 4px solid transparent;
+}
+
+.NavigationItem a:active,
+.NavigationItem a.active {
+  border-bottom: 4px solid #f59f93;
+}
+
+@media (hover: hover) {
+  .NavigationItem a:hover {
+    border-bottom: 4px solid #f59f93;
+  }
+}

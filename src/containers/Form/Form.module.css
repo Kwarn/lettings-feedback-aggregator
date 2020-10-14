@@ -1,0 +1,8 @@
+.Form {
+  display: flex;
+  transition: ease-in-out .5s;
+}
+
+.Form.success {
+  color: black;
+}
