@@ -1,14 +1,36 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
 import { BrowserRouter } from 'react-router-dom'
+import { Provider } from 'react-redux'
+import { createStore, applyMiddleware, compose, combineReducers } from 'redux'
+import createSagaMiddleware from 'redux-saga'
+import feedbackDataReducer from './store/reducers/feedbackData'
+import tallyDataReducer from './store/reducers/tallyData'
 import './index.css'
 import App from './App'
 import * as serviceWorker from './serviceWorker'
+import { watchFeedbackData, watchTallyData } from './store/sagas'
+
+const rootReducer = combineReducers({
+  fbData: feedbackDataReducer,
+  tallyData: tallyDataReducer,
+})
+
+const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose
+const sagaMiddleware = createSagaMiddleware()
+const store = createStore(
+  rootReducer,
+  composeEnhancers(applyMiddleware(sagaMiddleware))
+)
+sagaMiddleware.run(watchFeedbackData)
+sagaMiddleware.run(watchTallyData)
 
 ReactDOM.render(
-  <BrowserRouter>
-    <App />
-  </BrowserRouter>,
+  <Provider store={store}>
+    <BrowserRouter>
+      <App />
+    </BrowserRouter>
+  </Provider>,
   document.getElementById('root')
 )
 

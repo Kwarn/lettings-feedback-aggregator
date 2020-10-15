@@ -1,10 +1,10 @@
-import React, { useState } from 'react'
+import React from 'react'
 import Pie from './Pie/Pie'
 
-const Charts = ({ tallies }) => {
+const Charts = ({ tallyData }) => {
   return (
     <div className={null}>
-      <Pie tallies={tallies} />
+      <Pie tallyData={tallyData} />
     </div>
   )
 }

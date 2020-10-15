@@ -5,14 +5,14 @@ import { makeStyles } from '@material-ui/core/styles'
 const useStyles = makeStyles({
   wrapper: {
     display: 'flex',
-    justifyContent: 'center'
+    justifyContent: 'center',
   },
   pieChart: {
-    margin: "auto"
+    margin: 'auto',
   },
 })
 
-const Pie = ({ tallies }) => {
+const Pie = ({ tallyData }) => {
   const styles = useStyles()
 
   const locations = {
@@ -24,25 +24,21 @@ const Pie = ({ tallies }) => {
     hayes: 'Hayes',
     stepneyGreen: 'Stepney Green',
   }
-  const reason = {
+  const reasons = {
     cost: 'Cost',
     commute: 'Commute Distance',
     travelLinks: 'Travel Links',
   }
 
   const locationPieData = [['Location', 'Number of Entries']]
-  for (let key in tallies.location) {
-    console.log(key)
-    locationPieData.push([`${locations[key]}`, tallies.location[key]])
+  for (let key in tallyData.location) {
+    locationPieData.push([`${locations[key]}`, tallyData.location[key]])
   }
 
   const reasonPieData = [['Reason', 'Number of Entries']]
-  for (let key in tallies.reason) {
-    console.log(key)
-    reasonPieData.push([`${reason[key]}`, tallies.reason[key]])
+  for (let key in tallyData.reason) {
+    reasonPieData.push([`${reasons[key]}`, tallyData.reason[key]])
   }
-
-  console.log(locationPieData)
 
   return (
     <div className={styles.wrapper}>
@@ -54,7 +50,7 @@ const Pie = ({ tallies }) => {
         loader={<div>Loading Chart</div>}
         data={locationPieData}
         options={{
-          title: 'My Daily Activities',
+          title: 'Locations share',
         }}
         rootProps={{ 'data-testid': '1' }}
       />
@@ -65,7 +61,7 @@ const Pie = ({ tallies }) => {
         loader={<div>Loading Chart</div>}
         data={reasonPieData}
         options={{
-          title: 'My Daily Activities',
+          title: 'Reasons share',
         }}
         rootProps={{ 'data-testid': '1' }}
       />

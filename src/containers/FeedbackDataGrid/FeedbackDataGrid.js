@@ -1,4 +1,8 @@
 import React, { useState, useEffect } from 'react'
+import {
+  mapLocationKeyNameToDisplayableName,
+  mapReasonKeyNameToDisplayableName,
+} from '../../shared/Utility'
 import { DataGrid } from '@material-ui/data-grid'
 import { makeStyles } from '@material-ui/core/styles'
 
@@ -21,39 +25,25 @@ const useStyles = makeStyles(theme => ({
   },
 }))
 
-const FeedbackDataGrid = ({ feedbackData }) => {
+const FeedbackDataGrid = ({ fbData }) => {
   const styles = useStyles()
-  const [rows, setRows] = useState([])
+  const [rows, setRows] = useState(null)
+
   useEffect(() => {
     const rows = []
-    for (let fb in feedbackData) {
+    for (let fb in fbData) {
       rows.push({
         id: fb,
-        col1: feedbackData[fb].viewingDate,
-        col2: locations[feedbackData[fb].location],
-        col3: feedbackData[fb].flatNumber,
-        col4: feedbackData[fb].applicantName,
-        col5: reasons[feedbackData[fb].reason],
-        col6: feedbackData[fb].notes,
+        col1: fbData[fb].viewingDate,
+        col2: mapLocationKeyNameToDisplayableName(fbData[fb].location),
+        col3: fbData[fb].flatNumber,
+        col4: fbData[fb].applicantName,
+        col5: mapReasonKeyNameToDisplayableName(fbData[fb].reason),
+        col6: fbData[fb].notes,
       })
     }
     setRows(rows)
-  }, [feedbackData])
-
-  const locations = {
-    poplar: 'Poplar',
-    canningTown: 'Canning Town',
-    epsom: 'Epsom',
-    lewisham: 'Lewisham',
-    walthamstow: 'Walthamstow',
-    hayes: 'Hayes',
-    stepneyGreen: 'Stepney Green',
-  }
-  const reasons = {
-    cost: 'Cost',
-    commute: 'Commute Distance',
-    travelLinks: 'Travel Links',
-  }
+  }, [fbData])
 
   const columns = [
     { field: 'id', hide: true },
@@ -66,11 +56,15 @@ const FeedbackDataGrid = ({ feedbackData }) => {
   ]
 
   return (
-    <div className={styles.wrapper}>
-      <div style={{ height: 600, width: '100%', margin: "100px" }}>
+    // <div className={styles.wrapper}>
+    <div style={{ height: 600, width: '100%' }}>
+      {rows ? (
         <DataGrid rows={rows} columns={columns} />
-      </div>
+      ) : (
+        <h1>loading data..</h1>
+      )}
     </div>
+    // </div>
   )
 }
 

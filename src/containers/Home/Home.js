@@ -1,59 +1,64 @@
 import React, { useState, useEffect } from 'react'
-import Form from '../Form/Form'
 import axios from '../../shared/axios-feedback'
+import * as actions from '../../store/actions/index'
+import { connect } from 'react-redux'
+import Form from '../Form/Form'
 import Button from '@material-ui/core/Button'
-import { getFeedbackData, getTallies } from '../../shared/getData'
 import FeedbackDataGrid from '../FeedbackDataGrid/FeedbackDataGrid'
 import Charts from '../Charts/Charts'
 
-const Home = () => {
+// compounding search criteria on date, location
+// incomplete inputs are added to seperate database
+
+const defaultTallies = {
+  location: {
+    lewisham: 0,
+    poplar: 0,
+    canningTown: 0,
+    epsom: 0,
+    walthamstow: 0,
+    hayes: 0,
+    stepneyGreen: 0,
+  },
+  reason: {
+    cost: 0,
+    travelLinks: 0,
+    commute: 0,
+  },
+}
+
+const Home = ({ onFetchFeedbackData, onFetchTallyData, fbData, tallyData }) => {
   const [shouldFeedbackUpdate, setShouldFeedbackUpdate] = useState(false)
-  const [feedbackData, setFeedbackData] = useState(null)
-  const [tallies, setTallies] = useState(null)
 
   function toggleShouldFeedbackUpdate() {
     setShouldFeedbackUpdate(!shouldFeedbackUpdate)
   }
-
-  const defaultTallies = {
-    location: {
-      lewisham: 0,
-      poplar: 0,
-      canningTown: 0,
-      epsom: 0,
-      walthamstow: 0,
-      hayes: 0,
-      stepneyGreen: 0,
-    },
-    reason: {
-      cost: 0,
-      travelLinks: 0,
-      commute: 0,
-    },
-  }
-
   function resetTallyDatabase() {
     axios.put('/tallies.json', defaultTallies)
   }
 
   useEffect(() => {
-    getFeedbackData()
-      .then(data => setFeedbackData(data))
-      .catch(err => console.log(err))
-    if (!tallies) {
-      getTallies()
-        .then(data => setTallies(data))
-        .catch(err => console.log(err))
+    console.log('fb.shouldRefetch', fbData.shouldRefetchFeedbackData)
+    if (fbData.shouldRefetchFeedbackData) {
+      onFetchFeedbackData()
+      onFetchTallyData()
     }
-  }, [shouldFeedbackUpdate])
+  }, [
+    shouldFeedbackUpdate,
+    onFetchFeedbackData,
+    onFetchTallyData,
+    fbData.shouldRefetchFeedbackData,
+  ])
 
   return (
     <div>
-      <Button onClick={resetTallyDatabase}>Test</Button>
+      <Button onClick={() => resetTallyDatabase()}>Reset Tally Data</Button>
+      <Button onClick={() => onFetchFeedbackData()}>fetchFeebackData</Button>
+      <Button onClick={() => onFetchTallyData()}>fetchTallyData</Button>
       <div className={null}>
-        {tallies ? (
+        {tallyData ? (
           <Form
-            tallies={tallies}
+            tallyData={tallyData}
             toggleShouldUpdateCallback={toggleShouldFeedbackUpdate}
           />
         ) : (
@@ -61,9 +66,9 @@ const Home = () => {
         )}
       </div>
       <div className={null}>
-        {feedbackData ? (
+        {fbData ? (
           <FeedbackDataGrid
-            feedbackData={feedbackData}
+            fbData={fbData}
             toggleShouldUpdateCallback={toggleShouldFeedbackUpdate}
             shouldUpdate={shouldFeedbackUpdate}
           />
@@ -72,11 +77,24 @@ const Home = () => {
         )}
       </div>
       <div className={null}>
-        {tallies ? <Charts tallies={tallies} /> : <h2>Loading Charts</h2> }
-        
+        {tallyData ? <Charts tallyData={tallyData} /> : <h2>Loading Charts</h2>}
       </div>
     </div>
   )
 }
 
-export default Home
+const mapStateToProps = state => {
+  return {
+    fbData: state.fbData,
+    tallyData: state.tallyData,
+  }
+}
+
+const mapDispatchToProps = dispatch => {
+  return {
+    onFetchFeedbackData: () => dispatch(actions.fetchFeedbackData()),
+    onFetchTallyData: () => dispatch(actions.fetchTallyData()),
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(Home)

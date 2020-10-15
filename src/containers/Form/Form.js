@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from 'react'
-import axios from '../../shared/axios-feedback'
+import React, { useState } from 'react'
+import { connect } from 'react-redux'
+import * as actions from '../../store/actions/index'
 import { makeStyles } from '@material-ui/core/styles'
 import Button from '@material-ui/core/Button'
 import FormControl from '@material-ui/core/FormControl'
@@ -9,23 +10,6 @@ import Select from '@material-ui/core/Select'
 import MenuItem from '@material-ui/core/MenuItem'
 import TextField from '@material-ui/core/TextField'
 import { updateObject } from '../../shared/Utility'
-
-const defaultTallies = {
-  location: {
-    lewisham: 0,
-    poplar: 0,
-    canningTown: 0,
-    epsom: 0,
-    walthamstow: 0,
-    hayes: 0,
-    stepneyGreen: 0,
-  },
-  reason: {
-    cost: 0,
-    travelLinks: 0,
-    commute: 0,
-  },
-}
 
 const useStyles = makeStyles(theme => ({
   wrapper: {
@@ -56,7 +40,12 @@ const locations = [
   { stepneyGreen: 'Stepney Green' },
 ]
 
-const Form = ({ tallies, toggleShouldUpdateCallback }) => {
+const Form = ({
+  tallyData,
+  toggleShouldUpdateCallback,
+  onPostFeedbackData,
+  onPostTallyData,
+}) => {
   const styles = useStyles()
   const [error, setError] = useState('')
   const [formInputs, setFormInputs] = useState({
@@ -86,17 +75,17 @@ const Form = ({ tallies, toggleShouldUpdateCallback }) => {
 
   function updateTallies() {
     const tempLocationTally = {
-      [formInputs.location]: (tallies.location[formInputs.location] += 1),
+      [formInputs.location]: (tallyData.location[formInputs.location] += 1),
     }
     const tempReasonTally = {
-      [formInputs.reason]: (tallies.reason[formInputs.reason] += 1),
+      [formInputs.reason]: (tallyData.reason[formInputs.reason] += 1),
     }
 
-    const updatedLocation = updateObject(tallies.location, tempLocationTally)
-    const updatedReason = updateObject(tallies.reason, tempReasonTally)
+    const updatedLocation = updateObject(tallyData.location, tempLocationTally)
+    const updatedReason = updateObject(tallyData.reason, tempReasonTally)
 
     return {
-      ...tallies,
+      ...tallyData,
       location: { ...updatedLocation },
       reason: { ...updatedReason },
     }
@@ -111,13 +100,9 @@ const Form = ({ tallies, toggleShouldUpdateCallback }) => {
     if (!isFormValid) {
       setError(<h1>Please fill out form</h1>)
     } else {
-      const tallies = updateTallies()
-      axios
-        .post('/feedback.json', formInputs)
-        .then(res => clearFields())
-        .then(res => toggleShouldUpdateCallback())
-        .catch(err => setError(err.message))
-      axios.put('/tallies.json', tallies).catch(err => console.log(err))
+      onPostTallyData(updateTallies())
+      onPostFeedbackData(formInputs)
+      clearFields()
     }
   }
 
@@ -212,4 +197,20 @@ const Form = ({ tallies, toggleShouldUpdateCallback }) => {
   )
 }
 
-export default Form
+const mapStateToProps = state => {
+  return {
+    fbData: state.fbData,
+    tallyData: state.tallyData,
+  }
+}
+
+const mapDispatchToProps = dispatch => {
+  return {
+    onPostFeedbackData: newFbDataEntry =>
+      dispatch(actions.postFeedbackData(newFbDataEntry)),
+    onPostTallyData: updatedTallyData =>
+      dispatch(actions.postTallyData(updatedTallyData)),
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(Form)
