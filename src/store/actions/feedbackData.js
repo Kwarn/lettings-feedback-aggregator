@@ -7,9 +7,10 @@ export const postFeedbackData = newFbDataEntry => {
   }
 }
 
-export const postFeedbackDataSuccess = () => {
+export const postFeedbackDataSuccess = newFbDataEntry => {
   return {
     type: actionTypes.POST_FEEDBACK_DATA_SUCCESS,
+    newFbDataEntry,
   }
 }
 

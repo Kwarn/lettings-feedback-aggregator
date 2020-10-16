@@ -2,12 +2,12 @@ import axios from '../../shared/axios-feedback'
 import * as actions from '../actions/'
 import { put } from 'redux-saga/effects'
 
-export function* postTallyDataSaga(action) {
+export function* putTallyDataSaga(action) {
   try {
-    yield axios.put('/tallies.json', action.updatedTallyData)
-    yield put(actions.postTallyDataSuccess(action.updatedTallyData))
+    const res = yield axios.put('/tallies.json', action.updatedTallyData)
+    yield put(actions.putTallyDataSuccess(action.updatedTallyData))
   } catch (error) {
-    yield put(actions.postTallyDataFailed(error))
+    yield put(actions.putTallyDataFailed(error))
   }
 }
 

@@ -5,7 +5,7 @@ import {
   postFeedbackDataSaga,
   deleteFeedbackDataEntriesSaga,
 } from './feedbackData'
-import { fetchTallyDataSaga, postTallyDataSaga } from './tallyData'
+import { fetchTallyDataSaga, putTallyDataSaga } from './tallyData'
 
 export function* watchFeedbackData() {
   yield all([
@@ -21,6 +21,6 @@ export function* watchFeedbackData() {
 export function* watchTallyData() {
   yield all([
     takeLatest(actionTypes.FETCH_TALLY_DATA, fetchTallyDataSaga),
-    takeEvery(actionTypes.POST_TALLY_DATA, postTallyDataSaga),
+    takeEvery(actionTypes.PUT_TALLY_DATA, putTallyDataSaga),
   ])
 }

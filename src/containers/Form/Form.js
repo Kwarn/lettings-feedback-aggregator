@@ -29,17 +29,7 @@ const useStyles = makeStyles(theme => ({
   },
 }))
 
-const locations = [
-  { poplar: 'Poplar' },
-  { canningTown: 'Canning Town' },
-  { epsom: 'Epsom' },
-  { lewisham: 'Lewisham' },
-  { walthamstow: 'Walthamstow' },
-  { hayes: 'Hayes' },
-  { stepneyGreen: 'Stepney Green' },
-]
-
-const Form = ({ tallyData, onPostFeedbackData, onPostTallyData }) => {
+const Form = ({ tallyData, onPostFeedbackData, onPutTallyData }) => {
   const styles = useStyles()
   const [error, setError] = useState('')
   const [formInputs, setFormInputs] = useState({
@@ -49,11 +39,6 @@ const Form = ({ tallyData, onPostFeedbackData, onPostTallyData }) => {
     applicantName: '',
     reason: '',
     notes: '',
-  })
-
-  const locationMenuItems = locations.map(l => {
-    const key = Object.keys(l)[0]
-    return <MenuItem key={key} value={key}>{`${l[key]}`}</MenuItem>
   })
 
   function clearFields() {
@@ -80,32 +65,24 @@ const Form = ({ tallyData, onPostFeedbackData, onPostTallyData }) => {
         location: { [formInputs.location]: 1 },
         reason: { [formInputs.reason]: 1 },
       }
-      onPostTallyData(updateTallyData(tallyData, newTallyData, 'INCREMENT'))
+      onPutTallyData(updateTallyData(tallyData, newTallyData, 'INCREMENT'))
       onPostFeedbackData(formInputs)
       // clearFields()
     }
   }
 
+  // temp function for testing
   function forcePostNewFeedbackEntry() {
     function getRandomInt(max) {
       return Math.floor(Math.random() * Math.floor(max))
     }
-    const locations = [
-      'poplar',
-      'canningTown',
-      'epsom',
-      'lewisham',
-      'walthamstow',
-      'hayes',
-      'stepneyGreen',
-    ]
-    const reasons = ['cost', 'travelLinks', 'commute']
+
     const tempFeedbackData = {
       viewingDate: '2020-10-10',
-      location: locations[getRandomInt(7)],
+      location: tallyData.orderedLocationKeyNameStringsArray[getRandomInt(7)],
       flatNumber: '115',
       applicantName: 'test',
-      reason: reasons[getRandomInt(3)],
+      reason: tallyData.orderedReasonKeyNameStringsArray[getRandomInt(3)],
       notes: 'teeessttt',
     }
     const newTallyData = {
@@ -113,8 +90,28 @@ const Form = ({ tallyData, onPostFeedbackData, onPostTallyData }) => {
       reason: { [tempFeedbackData.reason]: 1 },
     }
     onPostFeedbackData(tempFeedbackData)
-    onPostTallyData(updateTallyData(tallyData, newTallyData, 'INCREMENT'))
+    onPutTallyData(updateTallyData(tallyData, newTallyData, 'INCREMENT'))
   }
+
+  const locationMenuItems = tallyData.locationObjectKeyNameToStr.map(l => {
+    const key = Object.keys(l)[0]
+    return (
+      <MenuItem
+        key={key}
+        value={key}
+      >{`${tallyData.convertKeyNameToStr[key]}`}</MenuItem>
+    )
+  })
+
+  const reasonMenuItems = tallyData.reasonObjectKeyNameToStr.map(r => {
+    const key = Object.keys(r)[0]
+    return (
+      <MenuItem
+        key={key}
+        value={key}
+      >{`${tallyData.convertKeyNameToStr[key]}`}</MenuItem>
+    )
+  })
 
   return (
     <form className={styles.wrapper}>
@@ -171,9 +168,7 @@ const Form = ({ tallyData, onPostFeedbackData, onPostTallyData }) => {
             setFormInputs({ ...formInputs, reason: event.target.value })
           }
         >
-          <MenuItem value="cost">Cost</MenuItem>
-          <MenuItem value="commute">Commute Distance</MenuItem>
-          <MenuItem value="travelLinks">Travel Links</MenuItem>
+          {reasonMenuItems}
         </Select>
       </FormControl>
 
@@ -219,8 +214,8 @@ const mapDispatchToProps = dispatch => {
   return {
     onPostFeedbackData: newFbDataEntry =>
       dispatch(actions.postFeedbackData(newFbDataEntry)),
-    onPostTallyData: updatedTallyData =>
-      dispatch(actions.postTallyData(updatedTallyData)),
+    onPutTallyData: updatedTallyData =>
+      dispatch(actions.putTallyData(updatedTallyData)),
   }
 }
 

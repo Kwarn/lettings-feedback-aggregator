@@ -4,8 +4,9 @@ import { put } from 'redux-saga/effects'
 
 export function* postFeedbackDataSaga(action) {
   try {
-    yield axios.post('/feedback.json', action.newFbDataEntry)
-    yield put(actions.postFeedbackDataSuccess())
+    const res = yield axios.post('/feedback.json', action.newFbDataEntry)
+    const newEntryWithId = { [res.data.name]: action.newFbDataEntry }
+    yield put(actions.postFeedbackDataSuccess(newEntryWithId))
   } catch (error) {
     yield put(actions.postFeedbackDataFailed(error))
   }

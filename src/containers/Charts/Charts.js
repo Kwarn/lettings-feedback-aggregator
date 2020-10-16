@@ -1,19 +1,20 @@
 import React from 'react'
 import { connect } from 'react-redux'
-import { mapReasonDisplayStrToKeyName } from '../../shared/Utility'
 import Pie from './Pie/Pie'
 import * as actions from '../../store/actions/index'
 
 const Charts = ({ fbData, tallyData, onMapReasonsToLocation }) => {
   return (
     <div className={null}>
-      <Pie
-        fbData={fbData}
-        tallyData={tallyData}
-        mapReasonsToLocationCb={(fbData, location) =>
-          onMapReasonsToLocation(fbData, location)
-        }
-      />
+      {fbData ? (
+        <Pie
+          fbData={fbData}
+          tallyData={tallyData}
+          mapReasonsToLocationCb={(fbData, location) =>
+            onMapReasonsToLocation(fbData, location)
+          }
+        />
+      ) : null}
     </div>
   )
 }

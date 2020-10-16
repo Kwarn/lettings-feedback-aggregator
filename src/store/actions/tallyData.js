@@ -1,22 +1,22 @@
 import * as actionTypes from './actionTypes'
 
-export const postTallyData = updatedTallyData => {
+export const putTallyData = updatedTallyData => {
   return {
-    type: actionTypes.POST_TALLY_DATA,
+    type: actionTypes.PUT_TALLY_DATA,
     updatedTallyData,
   }
 }
 
-export const postTallyDataSuccess = updatedTallyData => {
+export const putTallyDataSuccess = updatedTallyData => {
   return {
-    type: actionTypes.POST_TALLY_DATA_SUCCESS,
+    type: actionTypes.PUT_TALLY_DATA_SUCCESS,
     updatedTallyData,
   }
 }
 
-export const postTallyDataFailed = () => {
+export const putTallyDataFailed = () => {
   return {
-    type: actionTypes.POST_TALLY_DATA_FAILED,
+    type: actionTypes.PUT_TALLY_DATA_FAILED,
   }
 }
 

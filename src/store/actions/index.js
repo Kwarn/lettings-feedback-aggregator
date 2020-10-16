@@ -10,9 +10,9 @@ export {
   deleteFbDataEntriesFailed,
 } from './feedbackData'
 export {
-  postTallyData,
-  postTallyDataSuccess,
-  postTallyDataFailed,
+  putTallyData,
+  putTallyDataSuccess,
+  putTallyDataFailed,
   fetchTallyData,
   fetchTallyDataSuccess,
   fetchTallyDataFailed,

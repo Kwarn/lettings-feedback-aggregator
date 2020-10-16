@@ -33,10 +33,8 @@ const Home = ({ onFetchFeedbackData, onFetchTallyData, fbData, tallyData }) => {
   }
 
   useEffect(() => {
-    if (fbData.shouldRefetchFeedbackData) {
-      onFetchFeedbackData()
-      onFetchTallyData()
-    }
+    onFetchFeedbackData()
+    onFetchTallyData()
   }, [onFetchFeedbackData, onFetchTallyData, fbData.shouldRefetchFeedbackData])
 
   return (

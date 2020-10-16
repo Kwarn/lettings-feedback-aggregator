@@ -42,7 +42,7 @@ const FeedbackDataGrid = ({
   fbData,
   tallyData,
   onDeleteRows,
-  onPostTallyData,
+  onPutTallyData,
 }) => {
   const styles = useStyles()
   const [rows, setRows] = useState([])
@@ -85,7 +85,7 @@ const FeedbackDataGrid = ({
         deletedTallyData,
         'DECREMENT'
       )
-      onPostTallyData(updatedTallyData)
+      onPutTallyData(updatedTallyData)
       onDeleteRows(rowsSelectedForDelete)
       setRowsSelectedForDelete([])
     }
@@ -152,8 +152,8 @@ const mapStateToProps = state => {
 const mapDispatchToProps = dispatch => {
   return {
     onDeleteRows: entries => dispatch(actions.deleteFbDataEntries(entries)),
-    onPostTallyData: updatedTallyData =>
-      dispatch(actions.postTallyData(updatedTallyData)),
+    onPutTallyData: updatedTallyData =>
+      dispatch(actions.putTallyData(updatedTallyData)),
   }
 }
 
