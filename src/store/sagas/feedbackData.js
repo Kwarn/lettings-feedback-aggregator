@@ -19,3 +19,15 @@ export function* fetchFeedbackDataSaga() {
     yield put(actions.fetchFeedbackDataFailed(error))
   }
 }
+
+export function* deleteFeedbackDataEntriesSaga(action) {
+  try {
+    const idsDeletedArr = action.entries.map(entry => entry.id)
+    yield Promise.all(
+      idsDeletedArr.map(id => axios.delete(`/feedback/${id}.json`))
+    )
+    yield put(actions.deleteFbDataEntriesSuccess(idsDeletedArr))
+  } catch (error) {
+    yield put(actions.deleteFbDataEntriesFailed())
+  }
+}

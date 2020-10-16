@@ -1,15 +1,28 @@
 import React, { useState, useEffect } from 'react'
 import {
-  mapLocationKeyNameToDisplayableName,
-  mapReasonKeyNameToDisplayableName,
+  mapLocationDisplayStrToKeyName,
+  mapLocationKeyNameToDisplayableStr,
+  mapReasonDisplayStrToKeyName,
+  mapReasonKeyNameToDisplayableStr,
+  updateTallyData,
 } from '../../shared/Utility'
 import { DataGrid } from '@material-ui/data-grid'
+import Button from '@material-ui/core/Button'
 import { makeStyles } from '@material-ui/core/styles'
+import * as actions from '../../store/actions/index'
+import { connect } from 'react-redux'
 
 const useStyles = makeStyles(theme => ({
   wrapper: {
     display: 'flex',
     justifyContent: 'center',
+    backgroundColor: '#1C1C1C',
+  },
+  dataGrid: {
+    backgroundColor: '#FAFAFF',
+    height: 600,
+    width: '100%',
+    margin: '100px 300px 100px 300px',
   },
   formControl: {
     margin: theme.spacing(1),
@@ -25,24 +38,75 @@ const useStyles = makeStyles(theme => ({
   },
 }))
 
-const FeedbackDataGrid = ({ fbData }) => {
+const FeedbackDataGrid = ({
+  fbData,
+  tallyData,
+  onDeleteRows,
+  onPostTallyData,
+}) => {
   const styles = useStyles()
-  const [rows, setRows] = useState(null)
+  const [rows, setRows] = useState([])
+  const [deletedRows, setDeletedRows] = useState([])
+
+  const handleRowSelection = e => {
+    setDeletedRows([...deletedRows, ...rows.filter(r => r.id === e.data.id)])
+  }
+
+  const tallyDeletedRows = () => {
+    function tally(arr) {
+      return arr.reduce((acc, curr) => {
+        typeof acc[curr] === 'undefined' ? (acc[curr] = 1) : (acc[curr] += 1)
+        return acc
+      }, {})
+    }
+    const locationsTally = tally(
+      deletedRows.map(row => mapLocationDisplayStrToKeyName(row.col2))
+    )
+    const reasonsTally = tally(
+      deletedRows.map(row => mapReasonDisplayStrToKeyName(row.col5))
+    )
+    return {
+      location: { ...locationsTally },
+      reason: { ...reasonsTally },
+    }
+  }
+
+  const deleteRowsHandler = () => {
+    if (
+      window.confirm(
+        'Are you sure you wish to delete these items? DELETE IS PERMANENT'
+      )
+    ) {
+      setRows(
+        rows.filter(r => deletedRows.filter(sr => sr.id === r.id).length < 1)
+      )
+      const deletedTallyData = tallyDeletedRows()
+      const updatedTallyData = updateTallyData(
+        tallyData,
+        deletedTallyData,
+        'DECREMENT'
+      )
+      onPostTallyData(updatedTallyData)
+      onDeleteRows(deletedRows)
+      setDeletedRows([])
+    }
+  }
 
   useEffect(() => {
-    const rows = []
+    const rowsArr = []
     for (let fb in fbData) {
-      rows.push({
-        id: fb,
-        col1: fbData[fb].viewingDate,
-        col2: mapLocationKeyNameToDisplayableName(fbData[fb].location),
-        col3: fbData[fb].flatNumber,
-        col4: fbData[fb].applicantName,
-        col5: mapReasonKeyNameToDisplayableName(fbData[fb].reason),
-        col6: fbData[fb].notes,
-      })
+      if (fb !== 'shouldRefetchFeedbackData')
+        rowsArr.push({
+          id: fb,
+          col1: fbData[fb].viewingDate,
+          col2: mapLocationKeyNameToDisplayableStr(fbData[fb].location),
+          col3: fbData[fb].flatNumber,
+          col4: fbData[fb].applicantName,
+          col5: mapReasonKeyNameToDisplayableStr(fbData[fb].reason),
+          col6: fbData[fb].notes,
+        })
     }
-    setRows(rows)
+    setRows(rowsArr)
   }, [fbData])
 
   const columns = [
@@ -55,17 +119,42 @@ const FeedbackDataGrid = ({ fbData }) => {
     { field: 'col6', headerName: 'Notes', width: 150 },
   ]
 
+  const dgOrLoading = rows ? (
+    <DataGrid
+      rows={rows}
+      columns={columns}
+      checkboxSelection
+      onRowSelected={handleRowSelection}
+    />
+  ) : (
+    <h1>loading data..</h1>
+  )
+
   return (
-    // <div className={styles.wrapper}>
-    <div style={{ height: 600, width: '100%' }}>
-      {rows ? (
-        <DataGrid rows={rows} columns={columns} />
-      ) : (
-        <h1>loading data..</h1>
-      )}
+    <div className={styles.wrapper}>
+      <div className={styles.dataGrid}>
+        {dgOrLoading}
+        <Button variant="contained" color="primary" onClick={deleteRowsHandler}>
+          Delete Selected
+        </Button>
+      </div>
     </div>
-    // </div>
   )
 }
 
-export default FeedbackDataGrid
+const mapStateToProps = state => {
+  return {
+    fbData: state.fbData,
+    tallyData: state.tallyData,
+  }
+}
+
+const mapDispatchToProps = dispatch => {
+  return {
+    onDeleteRows: entries => dispatch(actions.deleteFbDataEntries(entries)),
+    onPostTallyData: updatedTallyData =>
+      dispatch(actions.postTallyData(updatedTallyData)),
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(FeedbackDataGrid)

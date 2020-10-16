@@ -39,3 +39,24 @@ export const fetchFeedbackDataFailed = error => {
     error,
   }
 }
+
+export const deleteFbDataEntries = entries => {
+  return {
+    type: actionTypes.DELETE_FEEDBACK_DATA_ENTRIES,
+    entries,
+  }
+}
+
+export const deleteFbDataEntriesSuccess = idsDeletedArr => {
+  return {
+    type: actionTypes.DELETE_FEEDBACK_DATA_ENTRIES_SUCCESS,
+    idsDeletedArr,
+  }
+}
+
+export const deleteFbDataEntriesFailed = error => {
+  return {
+    type: actionTypes.DELETE_FEEDBACK_DATA_ENTRIES_FAILED,
+    error,
+  }
+}

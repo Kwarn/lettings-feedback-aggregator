@@ -9,24 +9,23 @@ import Input from '@material-ui/core/Input'
 import Select from '@material-ui/core/Select'
 import MenuItem from '@material-ui/core/MenuItem'
 import TextField from '@material-ui/core/TextField'
-import { updateObject } from '../../shared/Utility'
+import { updateTallyData } from '../../shared/Utility'
 
 const useStyles = makeStyles(theme => ({
   wrapper: {
+    backgroundColor: '#FAFAFF',
     display: 'flex',
     justifyContent: 'center',
   },
   formControl: {
     margin: theme.spacing(1),
-    minWidth: 120,
+    minWidth: 100,
   },
   selectEmpty: {
     marginTop: theme.spacing(2),
   },
   button: {
     margin: theme.spacing(1),
-    minWidth: 120,
-    maxHeight: 50,
   },
 }))
 
@@ -40,12 +39,7 @@ const locations = [
   { stepneyGreen: 'Stepney Green' },
 ]
 
-const Form = ({
-  tallyData,
-  toggleShouldUpdateCallback,
-  onPostFeedbackData,
-  onPostTallyData,
-}) => {
+const Form = ({ tallyData, onPostFeedbackData, onPostTallyData }) => {
   const styles = useStyles()
   const [error, setError] = useState('')
   const [formInputs, setFormInputs] = useState({
@@ -73,41 +67,45 @@ const Form = ({
     })
   }
 
-  function updateTallies() {
-    const tempLocationTally = {
-      [formInputs.location]: (tallyData.location[formInputs.location] += 1),
-    }
-    const tempReasonTally = {
-      [formInputs.reason]: (tallyData.reason[formInputs.reason] += 1),
-    }
-
-    const updatedLocation = updateObject(tallyData.location, tempLocationTally)
-    const updatedReason = updateObject(tallyData.reason, tempReasonTally)
-
-    return {
-      ...tallyData,
-      location: { ...updatedLocation },
-      reason: { ...updatedReason },
-    }
-  }
-
   function submitForm() {
     let isFormValid = true
     for (let input in formInputs) {
-      if (input === 'notes') continue
-      else isFormValid = formInputs[input].trim() && isFormValid
+      if (!(input === 'notes'))
+        isFormValid = formInputs[input].trim() && isFormValid
     }
     if (!isFormValid) {
       setError(<h1>Please fill out form</h1>)
     } else {
-      onPostTallyData(updateTallies())
+      const newTallyData = {
+        location: { [formInputs.location]: 1 },
+        reason: { [formInputs.reason]: 1 },
+      }
+      onPostTallyData(updateTallyData(tallyData, newTallyData, 'INCREMENT'))
       onPostFeedbackData(formInputs)
-      clearFields()
+      // clearFields()
     }
+  }
+
+  function forcePostNewFeedbackEntry() {
+    const tempFeedbackData = {
+      viewingDate: '2020-10-10',
+      location: 'canningTown',
+      flatNumber: '115',
+      applicantName: 'test',
+      reason: 'travelLinks',
+      notes: 'teeessttt',
+    }
+    const newTallyData = {
+      location: { [tempFeedbackData.location]: 1 },
+      reason: { [tempFeedbackData.reason]: 1 },
+    }
+    onPostFeedbackData(tempFeedbackData)
+    onPostTallyData(updateTallyData(tallyData, newTallyData, 'INCREMENT'))
   }
 
   return (
     <form className={styles.wrapper}>
+      <Button onClick={forcePostNewFeedbackEntry}>Force new FB entry</Button>
       <TextField
         className={styles.formControl}
         label="Viewing Date"

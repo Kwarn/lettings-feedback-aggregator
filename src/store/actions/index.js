@@ -5,6 +5,9 @@ export {
   fetchFeedbackData,
   fetchFeedbackDataSuccess,
   fetchFeedbackDataFailed,
+  deleteFbDataEntries,
+  deleteFbDataEntriesSuccess,
+  deleteFbDataEntriesFailed,
 } from './feedbackData'
 export {
   postTallyData,
