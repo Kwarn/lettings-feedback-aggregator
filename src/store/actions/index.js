@@ -16,4 +16,5 @@ export {
   fetchTallyData,
   fetchTallyDataSuccess,
   fetchTallyDataFailed,
+  mapReasonsToLocation,
 } from './tallyData'

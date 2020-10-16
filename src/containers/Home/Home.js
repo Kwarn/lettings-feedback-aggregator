@@ -48,7 +48,7 @@ const Home = ({ onFetchFeedbackData, onFetchTallyData, fbData, tallyData }) => {
         <FeedbackDataGrid />
       </div>
       <div className={null}>
-        {tallyData ? <Charts tallyData={tallyData} /> : <h2>Loading Charts</h2>}
+        {tallyData ? <Charts /> : <h2>Loading Charts</h2>}
       </div>
       <Button onClick={() => resetTallyDatabase()}>Reset Tally Data</Button>
       <Button onClick={() => onFetchFeedbackData()}>fetchFeebackData</Button>

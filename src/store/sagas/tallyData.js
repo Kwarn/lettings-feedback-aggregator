@@ -5,7 +5,7 @@ import { put } from 'redux-saga/effects'
 export function* postTallyDataSaga(action) {
   try {
     yield axios.put('/tallies.json', action.updatedTallyData)
-    yield put(actions.postTallyDataSuccess())
+    yield put(actions.postTallyDataSuccess(action.updatedTallyData))
   } catch (error) {
     yield put(actions.postTallyDataFailed(error))
   }

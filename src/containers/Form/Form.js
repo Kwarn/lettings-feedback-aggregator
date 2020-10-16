@@ -87,12 +87,25 @@ const Form = ({ tallyData, onPostFeedbackData, onPostTallyData }) => {
   }
 
   function forcePostNewFeedbackEntry() {
+    function getRandomInt(max) {
+      return Math.floor(Math.random() * Math.floor(max))
+    }
+    const locations = [
+      'poplar',
+      'canningTown',
+      'epsom',
+      'lewisham',
+      'walthamstow',
+      'hayes',
+      'stepneyGreen',
+    ]
+    const reasons = ['cost', 'travelLinks', 'commute']
     const tempFeedbackData = {
       viewingDate: '2020-10-10',
-      location: 'canningTown',
+      location: locations[getRandomInt(7)],
       flatNumber: '115',
       applicantName: 'test',
-      reason: 'travelLinks',
+      reason: reasons[getRandomInt(3)],
       notes: 'teeessttt',
     }
     const newTallyData = {

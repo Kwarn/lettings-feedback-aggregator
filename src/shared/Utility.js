@@ -1,8 +1,15 @@
-export function updateObject(...args) {
+export function mergeObjects(...args) {
   const merged = Array.from(arguments).reduce((combined, item) => {
     return { ...combined, ...item }
   })
   return merged
+}
+
+export function tallyArrayOfStrings(strArr) {
+  return strArr.reduce((acc, curr) => {
+    typeof acc[curr] === 'undefined' ? (acc[curr] = 1) : (acc[curr] += 1)
+    return acc
+  }, {})
 }
 
 export function removePropertiesById(object, idsArray) {
@@ -15,13 +22,13 @@ export function removePropertiesById(object, idsArray) {
 
 export const mapLocationKeyNameToDisplayableStr = key => {
   const locations = {
-    poplar: 'Poplar',
     canningTown: 'Canning Town',
     epsom: 'Epsom',
-    lewisham: 'Lewisham',
-    walthamstow: 'Walthamstow',
     hayes: 'Hayes',
+    lewisham: 'Lewisham',
+    poplar: 'Poplar',
     stepneyGreen: 'Stepney Green',
+    walthamstow: 'Walthamstow',
   }
   return locations[key]
 }
@@ -30,21 +37,21 @@ export const mapLocationKeyNameToDisplayableStr = key => {
 
 export const mapLocationDisplayStrToKeyName = displayStr => {
   const locations = {
-    Poplar: 'poplar',
     'Canning Town': 'canningTown',
     Epsom: 'epsom',
-    Lewisham: 'lewisham',
-    Walthamstow: 'walthamstow',
     Hayes: 'hayes',
+    Lewisham: 'lewisham',
+    Poplar: 'poplar',
     'Stepney Green': 'stepneyGreen',
+    Walthamstow: 'walthamstow',
   }
   return locations[displayStr]
 }
 
 export const mapReasonKeyNameToDisplayableStr = key => {
   const reasons = {
-    cost: 'Cost',
     commute: 'Commute Distance',
+    cost: 'Cost',
     travelLinks: 'Travel Links',
   }
   return reasons[key]
@@ -52,8 +59,8 @@ export const mapReasonKeyNameToDisplayableStr = key => {
 
 export const mapReasonDisplayStrToKeyName = displayStr => {
   const reasons = {
-    Cost: 'cost',
     'Commute Distance': 'commute',
+    Cost: 'cost',
     'Travel Links': 'travelLinks',
   }
   return reasons[displayStr]
@@ -94,11 +101,10 @@ export function updateTallyData(tallyData, newTallyData, mode) {
     }
   }
 
-  const updatedLocationObj = updateObject(tallyData.location, tempLocationTally)
-  const updatedReasonObj = updateObject(tallyData.reason, tempReasonTally)
+  const updatedLocationObj = mergeObjects(tallyData.location, tempLocationTally)
+  const updatedReasonObj = mergeObjects(tallyData.reason, tempReasonTally)
 
   return {
-    ...tallyData,
     location: { ...updatedLocationObj },
     reason: { ...updatedReasonObj },
   }

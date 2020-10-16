@@ -46,11 +46,7 @@ const FeedbackDataGrid = ({
 }) => {
   const styles = useStyles()
   const [rows, setRows] = useState([])
-  const [deletedRows, setDeletedRows] = useState([])
-
-  const handleRowSelection = e => {
-    setDeletedRows([...deletedRows, ...rows.filter(r => r.id === e.data.id)])
-  }
+  const [rowsSelectedForDelete, setRowsSelectedForDelete] = useState([])
 
   const tallyDeletedRows = () => {
     function tally(arr) {
@@ -60,11 +56,12 @@ const FeedbackDataGrid = ({
       }, {})
     }
     const locationsTally = tally(
-      deletedRows.map(row => mapLocationDisplayStrToKeyName(row.col2))
+      rowsSelectedForDelete.map(row => mapLocationDisplayStrToKeyName(row.col2))
     )
     const reasonsTally = tally(
-      deletedRows.map(row => mapReasonDisplayStrToKeyName(row.col5))
+      rowsSelectedForDelete.map(row => mapReasonDisplayStrToKeyName(row.col5))
     )
+
     return {
       location: { ...locationsTally },
       reason: { ...reasonsTally },
@@ -78,7 +75,9 @@ const FeedbackDataGrid = ({
       )
     ) {
       setRows(
-        rows.filter(r => deletedRows.filter(sr => sr.id === r.id).length < 1)
+        rows.filter(
+          r => rowsSelectedForDelete.filter(sr => sr.id === r.id).length < 1
+        )
       )
       const deletedTallyData = tallyDeletedRows()
       const updatedTallyData = updateTallyData(
@@ -87,8 +86,8 @@ const FeedbackDataGrid = ({
         'DECREMENT'
       )
       onPostTallyData(updatedTallyData)
-      onDeleteRows(deletedRows)
-      setDeletedRows([])
+      onDeleteRows(rowsSelectedForDelete)
+      setRowsSelectedForDelete([])
     }
   }
 
@@ -118,13 +117,14 @@ const FeedbackDataGrid = ({
     { field: 'col5', headerName: 'Reason', width: 150 },
     { field: 'col6', headerName: 'Notes', width: 150 },
   ]
+  const data = { ...rows, ...columns }
 
   const dgOrLoading = rows ? (
     <DataGrid
       rows={rows}
       columns={columns}
       checkboxSelection
-      onRowSelected={handleRowSelection}
+      onSelectionChange={e => setRowsSelectedForDelete(e.rows)}
     />
   ) : (
     <h1>loading data..</h1>

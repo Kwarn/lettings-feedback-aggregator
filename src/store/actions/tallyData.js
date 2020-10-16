@@ -7,9 +7,10 @@ export const postTallyData = updatedTallyData => {
   }
 }
 
-export const postTallyDataSuccess = () => {
+export const postTallyDataSuccess = updatedTallyData => {
   return {
     type: actionTypes.POST_TALLY_DATA_SUCCESS,
+    updatedTallyData,
   }
 }
 
@@ -36,5 +37,13 @@ export const fetchTallyDataFailed = error => {
   return {
     type: actionTypes.FETCH_TALLY_DATA_FAILED,
     error,
+  }
+}
+
+export const mapReasonsToLocation = (fbData, location) => {
+  return {
+    type: actionTypes.MAP_REASONS_TO_LOCATION,
+    fbData,
+    location,
   }
 }
