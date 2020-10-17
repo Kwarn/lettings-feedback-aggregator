@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { connect } from 'react-redux'
-import * as actions from '../../store/actions/index'
+import * as actions from '../../../store/actions/index'
 import { makeStyles } from '@material-ui/core/styles'
 import Button from '@material-ui/core/Button'
 import FormControl from '@material-ui/core/FormControl'
@@ -9,7 +9,7 @@ import Input from '@material-ui/core/Input'
 import Select from '@material-ui/core/Select'
 import MenuItem from '@material-ui/core/MenuItem'
 import TextField from '@material-ui/core/TextField'
-import { updateTallyData } from '../../shared/Utility'
+import * as utility from '../../../shared/Utility'
 
 const useStyles = makeStyles(theme => ({
   wrapper: {
@@ -29,7 +29,11 @@ const useStyles = makeStyles(theme => ({
   },
 }))
 
-const Form = ({ tallyData, onPostFeedbackData, onPutTallyData }) => {
+const LostSalesInputForm = ({
+  lostSalesTallyData,
+  onPostFailedApplicantData,
+  onPutFailedApplicationsData,
+}) => {
   const styles = useStyles()
   const [error, setError] = useState('')
   const [formInputs, setFormInputs] = useState({
@@ -65,8 +69,10 @@ const Form = ({ tallyData, onPostFeedbackData, onPutTallyData }) => {
         location: { [formInputs.location]: 1 },
         reason: { [formInputs.reason]: 1 },
       }
-      onPutTallyData(updateTallyData(tallyData, newTallyData, 'INCREMENT'))
-      onPostFeedbackData(formInputs)
+      onPutFailedApplicationsData(
+        utility.updateTallyData(lostSalesTallyData, newTallyData, 'INCREMENT')
+      )
+      onPostFailedApplicantData(formInputs)
       // clearFields()
     }
   }
@@ -79,37 +85,39 @@ const Form = ({ tallyData, onPostFeedbackData, onPutTallyData }) => {
 
     const tempFeedbackData = {
       viewingDate: '2020-10-10',
-      location: tallyData.orderedLocationKeyNameStringsArray[getRandomInt(7)],
+      location: utility.orderedLocationKeyNameStringsArray[getRandomInt(7)],
       flatNumber: '115',
       applicantName: 'test',
-      reason: tallyData.orderedReasonKeyNameStringsArray[getRandomInt(3)],
+      reason: utility.orderedReasonKeyNameStringsArray[getRandomInt(3)],
       notes: 'teeessttt',
     }
     const newTallyData = {
       location: { [tempFeedbackData.location]: 1 },
       reason: { [tempFeedbackData.reason]: 1 },
     }
-    onPostFeedbackData(tempFeedbackData)
-    onPutTallyData(updateTallyData(tallyData, newTallyData, 'INCREMENT'))
+    onPostFailedApplicantData(tempFeedbackData)
+    onPutFailedApplicationsData(
+      utility.updateTallyData(lostSalesTallyData, newTallyData, 'INCREMENT')
+    )
   }
 
-  const locationMenuItems = tallyData.locationObjectKeyNameToStr.map(l => {
+  const locationMenuItems = utility.locationObjectKeyNameToStr.map(l => {
     const key = Object.keys(l)[0]
     return (
       <MenuItem
         key={key}
         value={key}
-      >{`${tallyData.convertKeyNameToStr[key]}`}</MenuItem>
+      >{`${utility.convertKeyNameToStr[key]}`}</MenuItem>
     )
   })
 
-  const reasonMenuItems = tallyData.reasonObjectKeyNameToStr.map(r => {
+  const reasonMenuItems = utility.reasonObjectKeyNameToStr.map(r => {
     const key = Object.keys(r)[0]
     return (
       <MenuItem
         key={key}
         value={key}
-      >{`${tallyData.convertKeyNameToStr[key]}`}</MenuItem>
+      >{`${utility.convertKeyNameToStr[key]}`}</MenuItem>
     )
   })
 
@@ -205,18 +213,18 @@ const Form = ({ tallyData, onPostFeedbackData, onPutTallyData }) => {
 
 const mapStateToProps = state => {
   return {
-    fbData: state.fbData,
-    tallyData: state.tallyData,
+    lostSalesData: state.lostSalesData,
+    lostSalesTallyData: state.lostSalesTallyData,
   }
 }
 
 const mapDispatchToProps = dispatch => {
   return {
-    onPostFeedbackData: newFbDataEntry =>
-      dispatch(actions.postFeedbackData(newFbDataEntry)),
-    onPutTallyData: updatedTallyData =>
-      dispatch(actions.putTallyData(updatedTallyData)),
+    onPostFailedApplicantData: newFbDataEntry =>
+      dispatch(actions.postLostSalesData(newFbDataEntry)),
+    onPutFailedApplicationsData: updatedTallyData =>
+      dispatch(actions.putLostSalesTallyData(updatedTallyData)),
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(Form)
+export default connect(mapStateToProps, mapDispatchToProps)(LostSalesInputForm)

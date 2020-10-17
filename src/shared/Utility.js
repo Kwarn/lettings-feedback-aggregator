@@ -1,3 +1,56 @@
+export const locationObjectKeyNameToStr = [
+  { poplar: 'Poplar' },
+  { canningTown: 'Canning Town' },
+  { epsom: 'Epsom' },
+  { lewisham: 'Lewisham' },
+  { walthamstow: 'Walthamstow' },
+  { hayes: 'Hayes' },
+  { stepneyGreen: 'Stepney Green' },
+]
+export const reasonObjectKeyNameToStr = [
+  { cost: 'Cost' },
+  { commute: 'Commute Distance' },
+  { travelLinks: 'Travel Links' },
+]
+export const convertStrToKeyName = {
+  'Canning Town': 'canningTown',
+  Epsom: 'epsom',
+  Hayes: 'hayes',
+  Lewisham: 'lewisham',
+  Poplar: 'poplar',
+  'Stepney Green': 'stepneyGreen',
+  Walthamstow: 'walthamstow',
+  Cost: 'cost',
+  'Commute Distance': 'commute',
+  'Travel Links': 'travelLinks',
+}
+export const convertKeyNameToStr = {
+  canningTown: 'Canning Town',
+  epsom: 'Epsom',
+  hayes: 'Hayes',
+  lewisham: 'Lewisham',
+  poplar: 'Poplar',
+  stepneyGreen: 'Stepney Green',
+  walthamstow: 'Walthamstow',
+  cost: 'Cost',
+  commute: 'Commute Distance',
+  travelLinks: 'Travel Links',
+}
+export const orderedLocationKeyNameStringsArray = [
+  'canningTown',
+  'epsom',
+  'hayes',
+  'lewisham',
+  'poplar',
+  'stepneyGreen',
+  'walthamstow',
+]
+export const orderedReasonKeyNameStringsArray = [
+  'commute',
+  'cost',
+  'travelLinks',
+]
+
 export function mergeObjects(...args) {
   const merged = Array.from(arguments).reduce((combined, item) => {
     return { ...combined, ...item }

@@ -1,20 +1,39 @@
 export {
-  postFeedbackData,
-  postFeedbackDataSuccess,
-  postFeedbackDataFailed,
-  fetchFeedbackData,
-  fetchFeedbackDataSuccess,
-  fetchFeedbackDataFailed,
-  deleteFbDataEntries,
-  deleteFbDataEntriesSuccess,
-  deleteFbDataEntriesFailed,
-} from './feedbackData'
+  postLostSalesData,
+  postLostSalesDataSuccess,
+  postLostSalesDataFailed,
+  fetchLostSalesData,
+  fetchLostSalesDataSuccess,
+  fetchLostSalesDataFailed,
+  deleteLostSalesDataEntries,
+  deleteLostSalesDataEntriesSuccess,
+  deleteLostSalesDataEntriesFailed,
+} from './lostSalesData'
 export {
-  putTallyData,
-  putTallyDataSuccess,
-  putTallyDataFailed,
-  fetchTallyData,
-  fetchTallyDataSuccess,
-  fetchTallyDataFailed,
+  putLostSalesTallyData,
+  putLostSalesTallyDataSuccess,
+  putLostSalesTallyDataFailed,
+  fetchLostSalesTallyData,
+  fetchLostSalesTallyDataSuccess,
+  fetchLostSalesTallyDataFailed,
   mapReasonsToLocation,
-} from './tallyData'
+} from './lostSalesTallyData'
+export {
+  postPendingSalesData,
+  postPendingSalesDataSuccess,
+  postPendingSalesDataFailed,
+  fetchPendingSalesData,
+  fetchPendingSalesDataSuccess,
+  fetchPendingSalesDataFailed,
+  deletePendingSalesDataEntries,
+  deletePendingSalesDataEntriesSuccess,
+  deletePendingSalesDataEntriesFailed,
+} from './pendingSalesData'
+export {
+  putPendingSalesTallyData,
+  putPendingSalesTallyDataSuccess,
+  putPendingSalesTallyDataFailed,
+  fetchPendingSalesTallyData,
+  fetchPendingSalesTallyDataSuccess,
+  fetchPendingSalesTallyDataFailed,
+} from './pendingSalesTallyData'

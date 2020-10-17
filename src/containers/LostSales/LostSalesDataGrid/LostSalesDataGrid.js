@@ -1,15 +1,9 @@
 import React, { useState, useEffect } from 'react'
-import {
-  mapLocationDisplayStrToKeyName,
-  mapLocationKeyNameToDisplayableStr,
-  mapReasonDisplayStrToKeyName,
-  mapReasonKeyNameToDisplayableStr,
-  updateTallyData,
-} from '../../shared/Utility'
+import * as utility from '../../../shared/Utility'
 import { DataGrid } from '@material-ui/data-grid'
 import Button from '@material-ui/core/Button'
 import { makeStyles } from '@material-ui/core/styles'
-import * as actions from '../../store/actions/index'
+import * as actions from '../../../store/actions'
 import { connect } from 'react-redux'
 
 const useStyles = makeStyles(theme => ({
@@ -39,15 +33,14 @@ const useStyles = makeStyles(theme => ({
 }))
 
 const FeedbackDataGrid = ({
-  lostSalesData: lostSalessData,
-  tallyData,
+  lostSalesData,
+  lostSalesTallyData,
   onDeleteRows,
   onPutLostSalesTallyData,
 }) => {
   const styles = useStyles()
   const [rows, setRows] = useState([])
   const [rowsSelectedForDelete, setRowsSelectedForDelete] = useState([])
-
   const tallyDeletedRows = () => {
     function tally(arr) {
       return arr.reduce((acc, curr) => {
@@ -56,10 +49,10 @@ const FeedbackDataGrid = ({
       }, {})
     }
     const locationsTally = tally(
-      rowsSelectedForDelete.map(row => mapLocationDisplayStrToKeyName(row.col2))
+      rowsSelectedForDelete.map(row => utility.convertStrToKeyName[row.col2])
     )
     const reasonsTally = tally(
-      rowsSelectedForDelete.map(row => mapReasonDisplayStrToKeyName(row.col5))
+      rowsSelectedForDelete.map(row => utility.convertStrToKeyName[row.col5])
     )
 
     return {
@@ -69,6 +62,7 @@ const FeedbackDataGrid = ({
   }
 
   const deleteRowsHandler = () => {
+    console.log(lostSalesTallyData)
     if (
       window.confirm(
         'Are you sure you wish to delete these items? DELETE IS PERMANENT'
@@ -80,8 +74,8 @@ const FeedbackDataGrid = ({
         )
       )
       const deletedTallyData = tallyDeletedRows()
-      const updatedTallyData = updateTallyData(
-        tallyData,
+      const updatedTallyData = utility.updateTallyData(
+        lostSalesTallyData,
         deletedTallyData,
         'DECREMENT'
       )
@@ -93,20 +87,19 @@ const FeedbackDataGrid = ({
 
   useEffect(() => {
     const rowsArr = []
-    for (let id in lostSalessData) {
-      if (id !== 'shouldRefetchFeedbackData')
-        rowsArr.push({
-          id: id,
-          col1: lostSalessData[id].viewingDate,
-          col2: mapLocationKeyNameToDisplayableStr(lostSalessData[id].location),
-          col3: lostSalessData[id].flatNumber,
-          col4: lostSalessData[id].applicantName,
-          col5: mapReasonKeyNameToDisplayableStr(lostSalessData[id].reason),
-          col6: lostSalessData[id].notes,
-        })
+    for (let id in lostSalesData) {
+      rowsArr.push({
+        id: id,
+        col1: lostSalesData[id].viewingDate,
+        col2: utility.convertKeyNameToStr[lostSalesData[id].location],
+        col3: lostSalesData[id].flatNumber,
+        col4: lostSalesData[id].applicantName,
+        col5: utility.convertKeyNameToStr[lostSalesData[id].reason],
+        col6: lostSalesData[id].notes,
+      })
     }
     setRows(rowsArr)
-  }, [lostSalessData])
+  }, [lostSalesData])
 
   const columns = [
     { field: 'id', hide: true },
@@ -145,7 +138,7 @@ const FeedbackDataGrid = ({
 const mapStateToProps = state => {
   return {
     lostSalesData: state.lostSalesData,
-    lostSalesTallyData: state.failedApplicantTallyData,
+    lostSalesTallyData: state.lostSalesTallyData,
   }
 }
 

@@ -1,5 +1,5 @@
 .NavigationItem {
-  margin: auto;
+  margin: 0 10px 0 10px;
   display: flex;
   height: 100%;
 }
