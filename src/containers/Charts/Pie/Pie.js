@@ -14,7 +14,7 @@ const useStyles = makeStyles({
   },
 })
 
-const Pie = ({ data, tallyData, mapReasonsToLocationCb }) => {
+const Pie = ({ salesData, tallyData, mapReasonsToLocationCb }) => {
   const [selectedLocation, setSelectedLocation] = useState('')
   const styles = useStyles()
   const locationPieData = [['Location', 'Number of Entries']]
@@ -53,7 +53,7 @@ const Pie = ({ data, tallyData, mapReasonsToLocationCb }) => {
       callback({ chartWrapper }) {
         const selectedRow = chartWrapper.getChart().getSelection()[0].row
         const location = utility.orderedLocationKeyNameStringsArray[selectedRow]
-        mapReasonsToLocationCb(data, location)
+        mapReasonsToLocationCb(salesData, location)
         setSelectedLocation(location)
       },
     },
@@ -61,7 +61,7 @@ const Pie = ({ data, tallyData, mapReasonsToLocationCb }) => {
 
   return (
     <>
-      <Button onClick={() => mapReasonsToLocationCb(data, 'canningTown')}>
+      <Button onClick={() => mapReasonsToLocationCb(salesData, 'canningTown')}>
         Generate Reasons for Location
       </Button>
       <div className={styles.wrapper}>

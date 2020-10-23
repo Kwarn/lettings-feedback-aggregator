@@ -1,10 +1,8 @@
-import React, { useState, useEffect } from 'react'
-import * as utility from '../../../shared/Utility'
+import React, { useState, useEffect, memo } from 'react'
+import * as utility from '../../shared/Utility'
 import { DataGrid } from '@material-ui/data-grid'
 import Button from '@material-ui/core/Button'
 import { makeStyles } from '@material-ui/core/styles'
-import * as actions from '../../../store/actions'
-import { connect } from 'react-redux'
 
 const useStyles = makeStyles(theme => ({
   wrapper: {
@@ -16,7 +14,7 @@ const useStyles = makeStyles(theme => ({
     backgroundColor: '#FAFAFF',
     height: 600,
     width: '100%',
-    margin: '100px 300px 100px 300px',
+    margin: '100px 100px 100px 100px',
   },
   formControl: {
     margin: theme.spacing(1),
@@ -32,15 +30,17 @@ const useStyles = makeStyles(theme => ({
   },
 }))
 
-const FeedbackDataGrid = ({
-  lostSalesData,
-  lostSalesTallyData,
-  onDeleteRows,
-  onPutLostSalesTallyData,
+const SalesDataGrid = ({
+  dataGroupIdentifier,
+  salesData,
+  tallyData,
+  putSalesTallyDataCb,
+  deleteSalesDataEntriesCb,
 }) => {
   const styles = useStyles()
   const [rows, setRows] = useState([])
-  const [rowsSelectedForDelete, setRowsSelectedForDelete] = useState([])
+  const [selectedRows, setSelectedRows] = useState([])
+
   const tallyDeletedRows = () => {
     function tally(arr) {
       return arr.reduce((acc, curr) => {
@@ -48,58 +48,82 @@ const FeedbackDataGrid = ({
         return acc
       }, {})
     }
-    const locationsTally = tally(
-      rowsSelectedForDelete.map(row => utility.convertStrToKeyName[row.col2])
-    )
-    const reasonsTally = tally(
-      rowsSelectedForDelete.map(row => utility.convertStrToKeyName[row.col5])
-    )
+
+    const key1 =
+      dataGroupIdentifier === 'PENDING_SALES'
+        ? 'location'
+        : dataGroupIdentifier === 'LOST_SALES'
+        ? 'location'
+        : ''
+    const key2 =
+      dataGroupIdentifier === 'PENDING_SALES'
+        ? 'flatNumber'
+        : dataGroupIdentifier === 'LOST_SALES'
+        ? 'reason'
+        : ''
+
+    let tally1 = {}
+    let tally2 = {}
+
+    if (dataGroupIdentifier === 'PENDING_SALES') {
+      tally1 = tally(
+        selectedRows.map(row => utility.convertStrToKeyName[row.col2])
+      )
+      tally2 = tally(selectedRows.map(row => row.col3))
+    }
+
+    if (dataGroupIdentifier === 'LOST_SALES') {
+      tally1 = tally(
+        selectedRows.map(row => utility.convertStrToKeyName[row.col2])
+      )
+      tally2 = tally(
+        selectedRows.map(row => utility.convertStrToKeyName[row.col5])
+      )
+    }
 
     return {
-      location: { ...locationsTally },
-      reason: { ...reasonsTally },
+      [key1]: { ...tally1 },
+      [key2]: { ...tally2 },
     }
   }
 
   const deleteRowsHandler = () => {
-    console.log(lostSalesTallyData)
     if (
       window.confirm(
         'Are you sure you wish to delete these items? DELETE IS PERMANENT'
       )
     ) {
       setRows(
-        rows.filter(
-          r => rowsSelectedForDelete.filter(sr => sr.id === r.id).length < 1
-        )
+        rows.filter(r => selectedRows.filter(sr => sr.id === r.id).length < 1)
       )
       const deletedTallyData = tallyDeletedRows()
-      const updatedTallyData = utility.updateTallyData(
-        lostSalesTallyData,
-        deletedTallyData,
-        'DECREMENT'
-      )
-      onPutLostSalesTallyData(updatedTallyData)
-      onDeleteRows(rowsSelectedForDelete)
-      setRowsSelectedForDelete([])
+      // const updatedTallyData = utility.updateTallyData(
+      //   tallyData,
+      //   deletedTallyData,
+      //   'DECREMENT'
+      // )
+      const salesDataIdsPendingDelete = selectedRows.map(row => row.id)
+      // putSalesTallyDataCb(updatedTallyData)
+      deleteSalesDataEntriesCb(dataGroupIdentifier, salesDataIdsPendingDelete)
+      setSelectedRows([])
     }
   }
 
   useEffect(() => {
     const rowsArr = []
-    for (let id in lostSalesData) {
+    for (let id in salesData) {
       rowsArr.push({
         id: id,
-        col1: lostSalesData[id].viewingDate,
-        col2: utility.convertKeyNameToStr[lostSalesData[id].location],
-        col3: lostSalesData[id].flatNumber,
-        col4: lostSalesData[id].applicantName,
-        col5: utility.convertKeyNameToStr[lostSalesData[id].reason],
-        col6: lostSalesData[id].notes,
+        col1: salesData[id].viewingDate,
+        col2: utility.convertKeyNameToStr[salesData[id].location],
+        col3: salesData[id].flatNumber,
+        col4: salesData[id].applicantName,
+        col5: utility.convertKeyNameToStr[salesData[id].reason],
+        col6: salesData[id].notes,
       })
     }
     setRows(rowsArr)
-  }, [lostSalesData])
+  }, [salesData])
 
   const columns = [
     { field: 'id', hide: true },
@@ -110,14 +134,13 @@ const FeedbackDataGrid = ({
     { field: 'col5', headerName: 'Reason', width: 150 },
     { field: 'col6', headerName: 'Notes', width: 150 },
   ]
-  const data = { ...rows, ...columns }
 
   const dgOrLoading = rows ? (
     <DataGrid
       rows={rows}
       columns={columns}
       checkboxSelection
-      onSelectionChange={e => setRowsSelectedForDelete(e.rows)}
+      onSelectionChange={e => setSelectedRows(e.rows)}
     />
   ) : (
     <h1>loading data..</h1>
@@ -135,20 +158,4 @@ const FeedbackDataGrid = ({
   )
 }
 
-const mapStateToProps = state => {
-  return {
-    lostSalesData: state.lostSalesData,
-    lostSalesTallyData: state.lostSalesTallyData,
-  }
-}
-
-const mapDispatchToProps = dispatch => {
-  return {
-    onDeleteRows: entries =>
-      dispatch(actions.deleteLostSalesDataEntries(entries)),
-    onPutLostSalesTallyData: updatedLostSalesTallyData =>
-      dispatch(actions.putLostSalesTallyData(updatedLostSalesTallyData)),
-  }
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(FeedbackDataGrid)
+export default SalesDataGrid

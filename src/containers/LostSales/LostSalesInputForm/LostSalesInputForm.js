@@ -30,9 +30,10 @@ const useStyles = makeStyles(theme => ({
 }))
 
 const LostSalesInputForm = ({
-  lostSalesTallyData,
-  onPostFailedApplicantData,
-  onPutFailedApplicationsData,
+  dataGroupIdentifier,
+  salesTallyData,
+  onPostSalesData,
+  onPutSalesTallyData,
 }) => {
   const styles = useStyles()
   const [error, setError] = useState('')
@@ -69,10 +70,10 @@ const LostSalesInputForm = ({
         location: { [formInputs.location]: 1 },
         reason: { [formInputs.reason]: 1 },
       }
-      onPutFailedApplicationsData(
-        utility.updateTallyData(lostSalesTallyData, newTallyData, 'INCREMENT')
+      onPutSalesTallyData(
+        utility.updateTallyData(salesTallyData, newTallyData, 'INCREMENT')
       )
-      onPostFailedApplicantData(formInputs)
+      onPostSalesData(formInputs)
       // clearFields()
     }
   }
@@ -95,10 +96,15 @@ const LostSalesInputForm = ({
       location: { [tempFeedbackData.location]: 1 },
       reason: { [tempFeedbackData.reason]: 1 },
     }
-    onPostFailedApplicantData(tempFeedbackData)
-    onPutFailedApplicationsData(
-      utility.updateTallyData(lostSalesTallyData, newTallyData, 'INCREMENT')
+
+    const updatedTallyData = utility.updateTallyData(
+      salesTallyData,
+      newTallyData,
+      'INCREMENT'
     )
+
+    onPostSalesData(dataGroupIdentifier, tempFeedbackData)
+    onPutSalesTallyData(dataGroupIdentifier, updatedTallyData)
   }
 
   const locationMenuItems = utility.locationObjectKeyNameToStr.map(l => {
@@ -213,17 +219,19 @@ const LostSalesInputForm = ({
 
 const mapStateToProps = state => {
   return {
-    lostSalesData: state.lostSalesData,
-    lostSalesTallyData: state.lostSalesTallyData,
+    salesData: state.salesData,
+    salesTallyData: state.salesTallyData,
   }
 }
 
 const mapDispatchToProps = dispatch => {
   return {
-    onPostFailedApplicantData: newFbDataEntry =>
-      dispatch(actions.postLostSalesData(newFbDataEntry)),
-    onPutFailedApplicationsData: updatedTallyData =>
-      dispatch(actions.putLostSalesTallyData(updatedTallyData)),
+    onPostSalesData: (dataGroupIdentifier, newSalesDataEntry) =>
+      dispatch(actions.postSalesData(dataGroupIdentifier, newSalesDataEntry)),
+    onPutSalesTallyData: (dataGroupIdentifier, updatedTallyData) =>
+      dispatch(
+        actions.putSalesTallyData(dataGroupIdentifier, updatedTallyData)
+      ),
   }
 }
 

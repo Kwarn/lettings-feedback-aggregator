@@ -1,3 +1,5 @@
+import _ from 'lodash'
+
 export const locationObjectKeyNameToStr = [
   { poplar: 'Poplar' },
   { canningTown: 'Canning Town' },
@@ -51,12 +53,7 @@ export const orderedReasonKeyNameStringsArray = [
   'travelLinks',
 ]
 
-export function mergeObjects(...args) {
-  const merged = Array.from(arguments).reduce((combined, item) => {
-    return { ...combined, ...item }
-  })
-  return merged
-}
+export const mergeObjects = (...params) => _.merge({}, ...params)
 
 export function tallyArrayOfStrings(strArr) {
   return strArr.reduce((acc, curr) => {
@@ -120,45 +117,39 @@ export const mapReasonDisplayStrToKeyName = displayStr => {
 }
 
 export function updateTallyData(tallyData, newTallyData, mode) {
-  // newTallyData = {
-  // location: {[location]: count, [location]: count},
-  // reason: {[reason]: count, [reason]: count}
-  // }
+  const tallyDataDeepCopy = _.cloneDeep(tallyData)
+  const newTallyDataValues = {}
 
-  let tempLocationTally = {}
-  let tempReasonTally = {}
-
-  for (let loc in newTallyData.location) {
-    if (mode === 'INCREMENT') {
-      tempLocationTally = {
-        [loc]: (tallyData.location[loc] += newTallyData.location[loc]),
+  if (mode === 'INCREMENT') {
+    for (let parentKey in newTallyData) {
+      for (let childKey in newTallyData[parentKey]) {
+        if (!(childKey in tallyDataDeepCopy[parentKey])) {
+          newTallyDataValues[parentKey] = {
+            [childKey]: newTallyData[parentKey][childKey],
+          }
+        } else {
+          newTallyDataValues[parentKey] = {
+            [childKey]: (tallyDataDeepCopy[parentKey][childKey] +=
+              newTallyData[parentKey][childKey]),
+          }
+        }
       }
     }
-    if (mode === 'DECREMENT') {
-      tempLocationTally = {
-        [loc]: (tallyData.location[loc] -= newTallyData.location[loc]),
-      }
-    }
+
+    const updatedTallyData = _.merge(tallyDataDeepCopy, newTallyDataValues)
+    return updatedTallyData
   }
 
-  for (let re in newTallyData.reason) {
-    if (mode === 'INCREMENT') {
-      tempReasonTally = {
-        [re]: (tallyData.reason[re] += newTallyData.reason[re]),
+  if (mode === 'DECREMENT') {
+    for (let parentKey in newTallyData) {
+      for (let childKey in newTallyData[parentKey]) {
+        newTallyDataValues[parentKey] = {
+          [childKey]: (tallyDataDeepCopy[parentKey][childKey] -=
+            newTallyData[parentKey][childKey]),
+        }
       }
     }
-    if (mode === 'DECREMENT') {
-      tempReasonTally = {
-        [re]: (tallyData.reason[re] -= newTallyData.reason[re]),
-      }
-    }
-  }
-
-  const updatedLocationObj = mergeObjects(tallyData.location, tempLocationTally)
-  const updatedReasonObj = mergeObjects(tallyData.reason, tempReasonTally)
-
-  return {
-    location: { ...updatedLocationObj },
-    reason: { ...updatedReasonObj },
+    const updatedTallyData = _.merge(tallyDataDeepCopy, newTallyDataValues)
+    return updatedTallyData
   }
 }

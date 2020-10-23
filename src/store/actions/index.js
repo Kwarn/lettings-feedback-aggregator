@@ -1,39 +1,20 @@
 export {
-  postLostSalesData,
-  postLostSalesDataSuccess,
-  postLostSalesDataFailed,
-  fetchLostSalesData,
-  fetchLostSalesDataSuccess,
-  fetchLostSalesDataFailed,
-  deleteLostSalesDataEntries,
-  deleteLostSalesDataEntriesSuccess,
-  deleteLostSalesDataEntriesFailed,
-} from './lostSalesData'
+  postSalesData,
+  postSalesDataSuccess,
+  postSalesDataFailed,
+  fetchSalesData,
+  fetchSalesDataSuccess,
+  fetchSalesDataFailed,
+  deleteSalesDataEntries,
+  deleteSalesDataEntriesSuccess,
+  deleteSalesDataEntriesFailed,
+} from './salesData'
 export {
-  putLostSalesTallyData,
-  putLostSalesTallyDataSuccess,
-  putLostSalesTallyDataFailed,
-  fetchLostSalesTallyData,
-  fetchLostSalesTallyDataSuccess,
-  fetchLostSalesTallyDataFailed,
+  putSalesTallyData,
+  putSalesTallyDataSuccess,
+  putSalesTallyDataFailed,
+  fetchSalesTallyData,
+  fetchSalesTallyDataSuccess,
+  fetchSalesTallyDataFailed,
   mapReasonsToLocation,
-} from './lostSalesTallyData'
-export {
-  postPendingSalesData,
-  postPendingSalesDataSuccess,
-  postPendingSalesDataFailed,
-  fetchPendingSalesData,
-  fetchPendingSalesDataSuccess,
-  fetchPendingSalesDataFailed,
-  deletePendingSalesDataEntries,
-  deletePendingSalesDataEntriesSuccess,
-  deletePendingSalesDataEntriesFailed,
-} from './pendingSalesData'
-export {
-  putPendingSalesTallyData,
-  putPendingSalesTallyDataSuccess,
-  putPendingSalesTallyDataFailed,
-  fetchPendingSalesTallyData,
-  fetchPendingSalesTallyDataSuccess,
-  fetchPendingSalesTallyDataFailed,
-} from './pendingSalesTallyData'
+} from './salesTallyData'

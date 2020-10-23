@@ -1,88 +1,95 @@
 import React, { useEffect } from 'react'
-import axios from '../../shared/axios-feedback'
 import * as actions from '../../store/actions/index'
 import { connect } from 'react-redux'
-import Form from './LostSalesInputForm/LostSalesInputForm'
-import Button from '@material-ui/core/Button'
-import LostSalesDataGrid from './LostSalesDataGrid/LostSalesDataGrid'
+import LostSalesInputForm from './LostSalesInputForm/LostSalesInputForm'
 import Charts from '../Charts/Charts'
-import * as utility from '../../shared/Utility'
+import SalesDataGrid from '../SalesDataGrid/SalesDataGrid'
+import _ from 'lodash'
 
 // compounding search criteria on date, location
 // incomplete inputs are added to seperate database
 
-const defaultTallies = {
-  location: {
-    lewisham: 0,
-    poplar: 0,
-    canningTown: 0,
-    epsom: 0,
-    walthamstow: 0,
-    hayes: 0,
-    stepneyGreen: 0,
-  },
-  reason: {
-    cost: 0,
-    travelLinks: 0,
-    commute: 0,
-  },
-}
+const DATA_GROUP_IDENTIFIER = 'LOST_SALES'
 
 const LostSales = ({
-  onFetchLostSalesData,
-  onFetchLostSalesTallyData,
+  onPutSalesTallyData,
+  onDeleteSalesDataEntries,
+  onFetchSalesData,
+  onFetchSalesTallyData,
   lostSalesData,
   lostSalesTallyData,
 }) => {
-  function resetTallyDatabase() {
-    axios.put('/tallies.json', defaultTallies)
-  }
-
   useEffect(() => {
-    onFetchLostSalesData()
-    onFetchLostSalesTallyData()
-  }, [onFetchLostSalesData, onFetchLostSalesTallyData])
+    onFetchSalesData(DATA_GROUP_IDENTIFIER)
+    onFetchSalesTallyData(DATA_GROUP_IDENTIFIER)
+  }, [onFetchSalesData, onFetchSalesTallyData])
 
-  return (
+  const content = (
     <div>
       <div className={null}>
-        {lostSalesTallyData ? (
-          <Form lostSalesTallyData={lostSalesTallyData} />
-        ) : (
-          <div>Loading..</div>
-        )}
+        <LostSalesInputForm
+          dataGroupIdentifier={DATA_GROUP_IDENTIFIER}
+          lostSalesTallyData={lostSalesTallyData}
+        />
+        <div>Loading..</div>
       </div>
       <div className={null}>
-        <LostSalesDataGrid />
+        <SalesDataGrid
+          dataGroupIdentifier={DATA_GROUP_IDENTIFIER}
+          salesData={lostSalesData}
+          tallyData={lostSalesTallyData}
+          putSalesTallyDataCb={(dataGroupIdentifier, updatedTallyData) =>
+            onPutSalesTallyData(dataGroupIdentifier, updatedTallyData)
+          }
+          deleteSalesDataEntriesCb={(
+            dataGroupIdentifier,
+            salesDataIdsPendingDelete
+          ) =>
+            onDeleteSalesDataEntries(
+              dataGroupIdentifier,
+              salesDataIdsPendingDelete
+            )
+          }
+        />
       </div>
       <div className={null}>
-        {lostSalesTallyData ? (
-          <Charts data={lostSalesData} tallyData={lostSalesTallyData} />
-        ) : (
-          <h2>Loading Charts</h2>
-        )}
+        {/* {lostSalesData ? (
+          <Charts salesData={lostSalesData} tallyData={lostSalesTallyData} />
+        ) : null} */}
       </div>
-      <Button onClick={() => resetTallyDatabase()}>Reset Tally Data</Button>
-      <Button onClick={() => onFetchLostSalesData()}>fetchFeebackData</Button>
-      <Button onClick={() => onFetchLostSalesTallyData()}>
-        fetchTallyData
-      </Button>
     </div>
   )
+
+  return content
 }
 
 const mapStateToProps = state => {
   return {
-    lostSalesData: state.lostSalesData,
-    lostSalesTallyData: state.lostSalesTallyData,
+    lostSalesData: state.salesData.lostSalesData,
+    lostSalesTallyData: state.salesTallyData.lostSalesTallyData,
   }
 }
 
 const mapDispatchToProps = dispatch => {
   return {
-    onFetchLostSalesData: () => dispatch(actions.fetchLostSalesData()),
-    onFetchLostSalesTallyData: () =>
-      dispatch(actions.fetchLostSalesTallyData()),
+    onFetchSalesData: dataGroupIdentifier =>
+      dispatch(actions.fetchSalesData(dataGroupIdentifier)),
+    onFetchSalesTallyData: dataGroupIdentifier =>
+      dispatch(actions.fetchSalesTallyData(dataGroupIdentifier)),
+    onPutSalesTallyData: (dataGroupIdentifier, updatedTallyData) =>
+      dispatch(
+        actions.putSalesTallyData(dataGroupIdentifier, updatedTallyData)
+      ),
+    onDeleteSalesDataEntries: (
+      dataGroupIdentifier,
+      salesDataIdsPendingDelete
+    ) =>
+      dispatch(
+        actions.deleteSalesDataEntries(
+          dataGroupIdentifier,
+          salesDataIdsPendingDelete
+        )
+      ),
   }
 }
 

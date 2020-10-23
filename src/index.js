@@ -4,25 +4,16 @@ import { BrowserRouter } from 'react-router-dom'
 import { Provider } from 'react-redux'
 import { createStore, applyMiddleware, compose, combineReducers } from 'redux'
 import createSagaMiddleware from 'redux-saga'
-import lostSalesDataReducer from './store/reducers/lostSalesData'
-import lostSalesTallyDataReducer from './store/reducers/lostSalesTallyData'
-import pendingSalesDataReducer from './store/reducers/pendingSalesData'
-import pendingSalesTallyDataReducer from './store/reducers/pendingSalesTallyData'
+import salesDataReducer from './store/reducers/salesData'
+import salesTallyDataReducer from './store/reducers/salesTallyData'
 import './index.css'
 import App from './App'
 import * as serviceWorker from './serviceWorker'
-import {
-  watchLostSalesData,
-  watchLostSalesTallyData,
-  watchPendingSalesData,
-  watchPendingSalesTallyData,
-} from './store/sagas'
+import { watchSalesData, watchSalesTallyData } from './store/sagas'
 
 const rootReducer = combineReducers({
-  lostSalesData: lostSalesDataReducer,
-  lostSalesTallyData: lostSalesTallyDataReducer,
-  pendingSalesData: pendingSalesDataReducer,
-  pendingSalesTallyData: pendingSalesTallyDataReducer,
+  salesData: salesDataReducer,
+  salesTallyData: salesTallyDataReducer,
 })
 
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose
@@ -31,10 +22,8 @@ const store = createStore(
   rootReducer,
   composeEnhancers(applyMiddleware(sagaMiddleware))
 )
-sagaMiddleware.run(watchLostSalesData)
-sagaMiddleware.run(watchLostSalesTallyData)
-sagaMiddleware.run(watchPendingSalesData)
-sagaMiddleware.run(watchPendingSalesTallyData)
+sagaMiddleware.run(watchSalesData)
+sagaMiddleware.run(watchSalesTallyData)
 
 ReactDOM.render(
   <Provider store={store}>

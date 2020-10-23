@@ -1,65 +1,29 @@
 import { takeEvery, all, takeLatest } from 'redux-saga/effects'
 import * as actionTypes from '../actions/actionTypes'
 import {
-  fetchLostSalesDataSaga,
-  postLostSalesDataSaga,
-  deleteLostSalesDataEntriesSaga,
-} from './lostSalesData'
+  fetchSalesDataSaga,
+  postSalesDataSaga,
+  deleteSalesDataEntriesSaga,
+} from './salesData'
 import {
-  fetchLostSalesTallyDataSaga,
-  putLostSalesTallyDataSaga,
-} from './lostSalesTallyData'
-import {
-  fetchPendingSalesDataSaga,
-  postPendingSalesDataSaga,
-  deletePendingSalesDataEntriesSaga,
-} from './pendingSalesData'
-import {
-  fetchPendingSalesTallyDataSaga,
-  putPendingSalesTallyDataSaga,
-} from './pendingSalesTallyData'
+  fetchSalesTallyDataSaga,
+  putSalesTallyDataSaga,
+} from './salesTallyData'
 
-export function* watchLostSalesData() {
+export function* watchSalesData() {
   yield all([
-    takeLatest(actionTypes.FETCH_LOST_SALES_DATA, fetchLostSalesDataSaga),
-    takeEvery(actionTypes.POST_LOST_SALES_DATA, postLostSalesDataSaga),
+    takeLatest(actionTypes.FETCH_SALES_DATA, fetchSalesDataSaga),
+    takeEvery(actionTypes.POST_SALES_DATA, postSalesDataSaga),
     takeEvery(
-      actionTypes.DELETE_LOST_SALES_DATA_ENTRIES,
-      deleteLostSalesDataEntriesSaga
+      actionTypes.DELETE_SALES_DATA_ENTRIES,
+      deleteSalesDataEntriesSaga
     ),
   ])
 }
 
-export function* watchLostSalesTallyData() {
+export function* watchSalesTallyData() {
   yield all([
-    takeLatest(
-      actionTypes.FETCH_LOST_SALES_TALLY_DATA,
-      fetchLostSalesTallyDataSaga
-    ),
-    takeEvery(actionTypes.PUT_LOST_SALES_TALLY_DATA, putLostSalesTallyDataSaga),
-  ])
-}
-
-export function* watchPendingSalesData() {
-  yield all([
-    takeLatest(actionTypes.FETCH_PENDING_SALES_DATA, fetchPendingSalesDataSaga),
-    takeEvery(actionTypes.POST_PENDING_SALES_DATA, postPendingSalesDataSaga),
-    takeEvery(
-      actionTypes.DELETE_PENDING_SALES_DATA_ENTRIES,
-      deletePendingSalesDataEntriesSaga
-    ),
-  ])
-}
-
-export function* watchPendingSalesTallyData() {
-  yield all([
-    takeLatest(
-      actionTypes.FETCH_PENDING_SALES_TALLY_DATA,
-      fetchPendingSalesTallyDataSaga
-    ),
-    takeEvery(
-      actionTypes.PUT_PENDING_SALES_TALLY_DATA,
-      putPendingSalesTallyDataSaga
-    ),
+    takeLatest(actionTypes.FETCH_SALES_TALLY_DATA, fetchSalesTallyDataSaga),
+    takeEvery(actionTypes.PUT_SALES_TALLY_DATA, putSalesTallyDataSaga),
   ])
 }

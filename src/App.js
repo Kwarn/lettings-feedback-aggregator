@@ -1,6 +1,5 @@
-import React, { Suspense, useEffect } from 'react'
-import { Route, Switch, withRouter, Redirect } from 'react-router-dom'
-import { connect } from 'react-redux'
+import React, { Suspense } from 'react'
+import { Route, Switch, Redirect } from 'react-router-dom'
 import Layout from './hoc/Layout/Layout'
 import Home from './containers/Home/Home'
 import Spinner from './components/UI/Spinner/Spinner'

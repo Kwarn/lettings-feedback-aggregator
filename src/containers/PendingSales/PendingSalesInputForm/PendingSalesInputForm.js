@@ -30,9 +30,9 @@ const useStyles = makeStyles(theme => ({
 }))
 
 const PendingSalesInputForm = ({
-  pendingSalesTallyData,
-  onPostPendingSalesData,
-  onPutTallyData,
+  salesTallyData,
+  onPostSalesData,
+  onPutSalesTallyData,
 }) => {
   const styles = useStyles()
   const [error, setError] = useState('')
@@ -42,6 +42,7 @@ const PendingSalesInputForm = ({
     flatNumber: '',
     applicantName: '',
     notes: '',
+    uid: '',
   })
 
   function clearFields() {
@@ -67,9 +68,11 @@ const PendingSalesInputForm = ({
         location: { [formInputs.location]: 1 },
         reason: { [formInputs.reason]: 1 },
       }
-      // onPutTallyData(updateTallyData(pendingSalesTallyData, newTallyData, 'INCREMENT'))
-      // onPostPendingSalesData(formInputs)
-      // // clearFields()
+      onPutSalesTallyData(
+        utility.updateTallyData(salesTallyData, newTallyData, 'INCREMENT')
+      )
+      onPostSalesData(formInputs)
+      // clearFields()
     }
   }
 
@@ -78,20 +81,22 @@ const PendingSalesInputForm = ({
     function getRandomInt(max) {
       return Math.floor(Math.random() * Math.floor(max))
     }
-
     const tempFeedbackData = {
       viewingDate: '2020-10-10',
       location: utility.orderedLocationKeyNameStringsArray[getRandomInt(7)],
-      flatNumber: '115',
+      flatNumber: getRandomInt(100).toString(),
       applicantName: 'test',
       notes: 'teeessttt',
     }
+
     const newTallyData = {
       location: { [tempFeedbackData.location]: 1 },
-      reason: { [tempFeedbackData.reason]: 1 },
+      flatNumber: { [tempFeedbackData.flatNumber]: 1 },
     }
-    // onPostPendingSalesData(tempFeedbackData)
-    // onPutTallyData(updateTallyData(pendingSalesTallyData, newTallyData, 'INCREMENT'))
+    onPutSalesTallyData(
+      utility.updateTallyData(salesTallyData, newTallyData, 'INCREMENT')
+    )
+    onPostSalesData(tempFeedbackData)
   }
 
   const locationMenuItems = utility.locationObjectKeyNameToStr.map(l => {
@@ -184,17 +189,17 @@ const PendingSalesInputForm = ({
 
 const mapStateToProps = state => {
   return {
-    pendingSalesData: state.pendingSalesData,
-    pendingSalesTallyData: state.pendingSalesTallyData,
+    salesData: state.salesData,
+    salesTallyData: state.salesTallyData,
   }
 }
 
 const mapDispatchToProps = dispatch => {
   return {
-    onPostPendingSalesData: newApplicantDataEntry =>
-      dispatch(actions.postPendingSalesData(newApplicantDataEntry)),
-    onPutTallyData: updatedPendingSalesTallyData =>
-      dispatch(actions.putPendingSalesTallyData(updatedPendingSalesTallyData)),
+    onPostSalesData: salesDataEntry =>
+      dispatch(actions.postSalesData(salesDataEntry)),
+    onPutSalesTallyData: updatedSalesTallyData =>
+      dispatch(actions.putSalesTallyData(updatedSalesTallyData)),
   }
 }
 
