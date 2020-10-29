@@ -1,59 +1,43 @@
-import * as actionTypes from '../actions/actionTypes'
-import _ from 'lodash'
+import * as actionTypes from '../actions/actionTypes';
+import produce from 'immer';
 
-const initalState = {}
+const initalState = {
+  // lostSalesData: {},
+  // pendingSalesData: {},
+  // completedSalesData: {},
+};
 
 const paths = {
   LOST_SALES: 'lostSalesData',
   PENDING_SALES: 'pendingSalesData',
   COMPLETED_SALES: 'completedSalesData',
-}
-function updateSalesDataGroup(state, identifier, data) {
-  const targetObject = paths[identifier]
-  return {
-    ...state,
-    [targetObject]: {
-      ...state[targetObject],
-      ...data,
-    },
-  }
-}
-
-function removeSalesDataById(state, identifier, idsArray) {
-  const targetSalesDataObject = paths[identifier]
-  const updatedSalesDataObject = _.cloneDeep(state[targetSalesDataObject])
-
-  idsArray.forEach(id => {
-    delete updatedSalesDataObject[id]
-  })
-
-  return { ...state, [targetSalesDataObject]: { ...updatedSalesDataObject } }
-}
+};
 
 const reducer = (state = initalState, action) => {
   switch (action.type) {
     case actionTypes.FETCH_SALES_DATA_SUCCESS:
-      return updateSalesDataGroup(
-        state,
-        action.payload.dataGroupIdentifier,
-        action.payload.salesData
-      )
+      return produce(state, draft => {
+        draft[paths[action.payload.dataGroupIdentifier]] =
+          action.payload.salesData;
+      });
+
     case actionTypes.POST_SALES_DATA_SUCCESS:
-      return updateSalesDataGroup(
-        state,
-        action.payload.dataGroupIdentifier,
-        action.payload.newSalesDataEntry
-      )
+      return produce(state, draft => {
+        draft[paths[action.payload.dataGroupIdentifier]] = Object.assign(
+          draft[paths[action.payload.dataGroupIdentifier]],
+          action.payload.newSalesDataEntry
+        );
+      });
 
     case actionTypes.DELETE_SALES_DATA_ENTRIES_SUCCESS:
-      return removeSalesDataById(
-        state,
-        action.payload.dataGroupIdentifier,
-        action.payload.deletedSalesDataIdsArray
-      )
+      return produce(state, draft => {
+        action.payload.deletedSalesDataIdsArray.forEach(id => {
+          delete draft[paths[action.payload.dataGroupIdentifier]][id];
+        });
+      });
     default:
-      return state
+      return state;
   }
-}
+};
 
-export default reducer
+export default reducer;
